@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use these measurements or code, please cite this repository."
+title: "GLM-5.3-Flash on 2x NVIDIA DGX Spark (GB10) with vLLM: an optimization log"
+type: software
+authors:
+  - alias: "yuyuyUuuuuuuuuuuu"
+repository-code: "https://github.com/yuyuyUuuuuuuuuuuu/glm-5.3-flash-dgx-spark-vllm-optimization"
+license: AGPL-3.0-only
+date-released: "2026-10-07"
+abstract: "Optimization log for serving GLM-5.3-Flash (EXL3 4bpw, DFlash2 speculative decoding) on two NVIDIA DGX Spark (GB10) machines with vLLM, tensor parallelism 2: measured single-stream decode, prefill and KV capacity, raw benchmark data, reproduction steps, and the measurements that turned out to be wrong."
+keywords: [GLM-5.3-Flash, DGX Spark, GB10, vLLM, EXL3, DFlash2, speculative decoding, tensor parallelism, benchmark]

@@ -2,6 +2,19 @@
 
 **Single-stream decode 99.4 tok/s structured, 62.6 coding, 46.6 prose, 45.5 Japanese prose (+35-59% over our pre-kernel baseline); cold 32k-token prefill about 3,000 tok/s; 2,003,436-token fp8 KV cache.** Two GB10 machines, tensor parallelism 2, EXL3 4bpw weights, DFlash2 speculative decoding. Numbers, failed experiments, wrong measurements and the code to reproduce them are all here.
 
+| fact | value |
+|---|---|
+| model | GLM-5.3-Flash (also written GLM5.3 Flash, glm-5.3-flash): 320B total / 18B active MoE, 1M context |
+| hardware | 2 x NVIDIA DGX Spark class machines (GB10), tensor parallelism 2, ConnectX-7 RoCE |
+| weights / serving | EXL3 4 bpw (not NVFP4), vLLM fork with overlays, DFlash2 speculative decoding |
+| decode, single stream | structured 99.44, coding 62.61, prose 46.58, Japanese prose 45.47 tok/s (production, 2026-10-05); n=10, temperature 0, thinking off, TTFT excluded |
+| prefill | 32k-token cold prompt 3,046 tok/s (2026-10-03), same yardstick as a public GX10 report |
+| KV cache | 2,003,436 tokens in 15 GiB of fp8 KV, `MAX_MODEL_LEN=1000000` |
+| period | 2026-08-31 to 2026-10-06 |
+| retracted or wrong measurements | `docs/what-did-not-work.md` |
+| raw data | `data/*.csv`, `raw/` |
+| licence | AGPL-3.0; the DFlash2 drafter is CC BY-NC-ND 4.0 (non-commercial) and is not included |
+
 > Licence: AGPL-3.0 (`LICENSE`); upstream notices in `THIRD_PARTY_NOTICES.md`. To rebuild the setup, follow
 > `REPRODUCE.md`. Note that the DFlash2 drafter used here is CC BY-NC-ND 4.0 (non-commercial).
 
