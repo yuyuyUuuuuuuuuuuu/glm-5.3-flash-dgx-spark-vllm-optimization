@@ -1,4 +1,4 @@
-# GLM-5.3-Flash on two GB10 boxes: an optimization log
+# GLM-5.3-Flash on 2x NVIDIA DGX Spark (GB10) with vLLM: an optimization log
 
 > Licence: AGPL-3.0 (`LICENSE`); upstream notices in `THIRD_PARTY_NOTICES.md`. To rebuild the setup, follow
 > `REPRODUCE.md`. Note that the DFlash2 drafter used here is CC BY-NC-ND 4.0 (non-commercial).
