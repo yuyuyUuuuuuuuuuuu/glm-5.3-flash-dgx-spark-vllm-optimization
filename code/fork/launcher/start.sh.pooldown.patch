@@ -1,0 +1,57 @@
+--- a/start.sh
++++ b/start.sh
+@@ -263,9 +263,10 @@
+ #   DFlash2 --speculative-config in BOTH inner scripts; forwarded to both ranks (head -e after
+ #   GLM53_SPEC_RESAMPLE_INDEPENDENT, worker serve_env_names). block also runs the bundle overlay
+ #   patch_spec_block_keys.py (patch_tf_bundle.py) on both ranks. docs/BLOCK_VERIFY.md of tf-exl3-fork.
+-# [kdaqkv] GLM53_KDA_STRIDED_QKV=1 (unset/empty/0 = stock) -> the bundle overlay patch_kda_strided_qkv.py (vLLM
+-#   #55736: the KDA recurrent decode reads q/k/v/beta token-strided, no .contiguous() copies) on BOTH ranks:
+-#   head -e after GLM53_KPOOL_RING, worker serve_env_names. docs/KDA_STRIDED_QKV.md of tf-exl3-fork.
++# [kpooldown] GLM53_KPOOL_DROP_LOWEST=1 (unset/empty/0 = stock) -> the bundle overlay patch_kpool_drop_lowest.py:
++#   the kpool indexer keeps the select_k-1 HIGHEST-scored pools before expand_pools_and_append_tail, dropping
++#   the lowest, deterministically (no host sync, FULL-graph safe), instead of production's arbitrary one. On
++#   BOTH ranks: head -e after GLM53_KDA_STRIDED_QKV, worker serve_env_names. docs/KPOOL_DROP_LOWEST.md.
+ # [tf-exl3-fork] bundle: TensorFold EXL3 MoE kernels + resample-noise fix + drafter FP8 (inert unless its knobs are set)
+ TF_BUNDLE_PATCH_HOST="${TF_BUNDLE_PATCH_HOST:-$SCRIPT_DIR/overlay/patch_tf_bundle.py}"
+ TF_BUNDLE_DIR_HOST="${TF_BUNDLE_DIR_HOST:-$SCRIPT_DIR/overlay/tf}"
+@@ -745,6 +746,23 @@
+             return 2
+         fi
+     fi
++    # [kpooldown] the kpool indexer drops the LOWEST-scored pool of the top-k (docs/KPOOL_DROP_LOWEST.md), on both
++    # ranks. Unset/empty/0 = stock (production's last-column truncation drops an ARBITRARY pool per run: the top-k
++    # ops return a deterministic SET in a nondeterministic ORDER); 1 = the overlay patch_kpool_drop_lowest.py, run
++    # by patch_tf_bundle.py. Anything else would stop both containers inside the bundle, so it is refused here.
++    if [ -n "${GLM53_KPOOL_DROP_LOWEST:-}" ]; then
++        _glm53_validate_bool_flag GLM53_KPOOL_DROP_LOWEST "$GLM53_KPOOL_DROP_LOWEST" || return
++    fi
++    if [ "${GLM53_KPOOL_DROP_LOWEST:-}" = "1" ]; then
++        if [ ! -s "$TF_BUNDLE_DIR_HOST/overlay/patch_kpool_drop_lowest.py" ]; then
++            echo "GLM53_KPOOL_DROP_LOWEST=1 requires $TF_BUNDLE_DIR_HOST/overlay/patch_kpool_drop_lowest.py" >&2
++            return 2
++        fi
++        if ! grep -qF '("patch_kpool_drop_lowest.py", "GLM53_KPOOL_DROP_LOWEST")' "$TF_BUNDLE_PATCH_HOST" 2>/dev/null; then
++            echo "GLM53_KPOOL_DROP_LOWEST=1 requires $TF_BUNDLE_PATCH_HOST to run patch_kpool_drop_lowest.py (the r16l patch_tf_bundle.py)" >&2
++            return 2
++        fi
++    fi
+     _glm53_validate_spinwait_ms || return
+     _glm53_validate_bool_flag GLM53_APC_NO_STORE "${GLM53_APC_NO_STORE-1}" || return
+     _glm53_validate_bool_flag GLM53_KV_CAPACITY_LOG "${GLM53_KV_CAPACITY_LOG-1}" || return
+@@ -2261,7 +2279,7 @@
+              GLM53_DEC_MOEGLUE_WARM_MAX_M GLM53_DEC_HOSTLOOP GLM53_DEC_HOSTLOOP_VERIFY \
+              GLM53_DEC_HOSTLOOP_VERIFY_EVERY GLM53_DEC_HOSTLOOP_METER GLM53_DEC_HOSTLOOP_WAKE \
+              GLM53_DEC_HOSTLOOP_WAKE_TICK_US GLM53_DEC_HOSTLOOP_WAKE_PIN GLM53_DEC_PROF_DIAG GLM53_DEC_SMALLOPS \
+-             GLM53_DEC_SMALLOPS_KINDS GLM53_KPOOL_RING GLM53_KDA_STRIDED_QKV; do  # [tf-exl3-fork]
++             GLM53_DEC_SMALLOPS_KINDS GLM53_KPOOL_RING GLM53_KDA_STRIDED_QKV GLM53_KPOOL_DROP_LOWEST; do  # [tf-exl3-fork]
+         serve_env+=" -e $v='${!v:-}'"
+         serve_env_names+=("$v")
+     done
+@@ -2505,6 +2523,7 @@
+         -e GLM53_DEC_SMALLOPS_KINDS="${GLM53_DEC_SMALLOPS_KINDS:-}" \
+         -e GLM53_KPOOL_RING="${GLM53_KPOOL_RING:-}" \
+         -e GLM53_KDA_STRIDED_QKV="${GLM53_KDA_STRIDED_QKV:-}" \
++        -e GLM53_KPOOL_DROP_LOWEST="${GLM53_KPOOL_DROP_LOWEST:-}" \
+         -e GLM53_EXL3_MOE_FAST="$GLM53_EXL3_MOE_FAST" \
+         -e GLM53_KDA_BF16_LARGE_M="$GLM53_KDA_BF16_LARGE_M" \
+         -e GLM53_COOP_GEOMETRY="$GLM53_COOP_GEOMETRY" \

@@ -1,0 +1,16 @@
+date,config,workload,concurrency,per_stream_tokps,aggregate_tokps,acceptance_per_step,conditions,source
+2026-09-12,EXL3 k=7 (pre-fork),prose (thinking on),1,17.8,17.8,,"idle engine",operator notes
+2026-09-12,EXL3 k=7 (pre-fork),prose (thinking on),2,,32.0,,idle engine,operator notes
+2026-09-12,EXL3 k=7 (pre-fork),prose (thinking on),4,,41.2,,idle engine,operator notes
+2026-09-12,EXL3 k=7 (pre-fork),JSON (thinking off),1,41.0,41.0,,idle engine,operator notes
+2026-09-12,EXL3 k=7 (pre-fork),JSON (thinking off),2,,52.4,,idle engine,operator notes
+2026-09-12,EXL3 k=7 (pre-fork),JSON (thinking off),4,,87.7,,idle engine,operator notes
+2026-09-12,EXL3 k=7 (pre-fork),JSON (thinking off),8,,131.4,,idle engine,operator notes
+2026-10-04,r16z6rev-kl2 era,prose,1,43.80,,2.23,bench_decode.py T=0,bench/conc-prose-1.json
+2026-10-04,r16z6rev-kl2 era,prose,2,31.73,60.53,2.12,bench_decode.py T=0,bench/conc-prose-2.json
+2026-10-04,r16z6rev-kl2 era,prose,4,22.74,85.00,2.16,bench_decode.py T=0,bench/conc-prose-4.json
+2026-10-04,r16z6rev-kl2 era,prose,8,17.46,131.31,2.20,bench_decode.py T=0,bench/conc-prose-8.json
+2026-10-04,r16z6rev-kl2 era,coding,1,58.18,,3.94,bench_decode.py T=0,bench/conc-coding-1.json
+2026-10-04,r16z6rev-kl2 era,coding,2,44.30,81.92,3.81,bench_decode.py T=0,bench/conc-coding-2.json
+2026-10-04,r16z6rev-kl2 era,coding,4,37.12,136.50,3.82,bench_decode.py T=0,bench/conc-coding-4.json
+2026-10-04,r16z6rev-kl2 era,coding,8,26.19,192.25,3.49,bench_decode.py T=0,bench/conc-coding-8.json

@@ -1,0 +1,306 @@
+diff --git a/kernels/exl3.cu b/kernels/exl3.cu
+index c2886ac..14d0c6a 100644
+--- a/kernels/exl3.cu
++++ b/kernels/exl3.cu
+@@ -73,6 +73,24 @@ __device__ __forceinline__ uint32_t load_pair(const half* x, bool ok) {
+     return ok ? *reinterpret_cast<const uint32_t*>(x) : 0u;
+ }
+ 
++// K5 programmatic dependent launch (docs/OPTIMIZATION.md). pdl_wait: until the preceding kernel of the stream (the
++// programmatic primary) has completed and its writes are visible; pdl_trigger: this block allows the next kernel's
++// blocks to be launched. Both are no-ops for a kernel launched without the programmatic-stream-serialization
++// attribute. Rules followed by every kernel of the chain: pdl_wait before any read of data a predecessor wrote in
++// this call, before any global write, and before any exit (so no kernel can complete before its predecessor);
++// reads issued before pdl_wait touch only immutable data (weights, pointer tables) and the route tables written two
++// or more launches back, the latter with ld.global.cg (no stale L1 line from the previous call).
++__device__ __forceinline__ void pdl_wait() {
++#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 900
++    asm volatile("griddepcontrol.wait;" ::: "memory");
++#endif
++}
++__device__ __forceinline__ void pdl_trigger() {
++#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 900
++    asm volatile("griddepcontrol.launch_dependents;" ::: "memory");
++#endif
++}
++
+ // ---------------------------------------------------------------------------------------------------------
+ // Grouped trellis GEMV over segments (A1, A4, A10).
+ //
+@@ -105,18 +123,39 @@ __device__ __forceinline__ uint32_t ld_weight(const uint32_t* p, uint64_t pol) {
+     return __ldg(p);
+ }
+ 
+-template <int NT, int W, int ORD, int PIPE, int LEAN, int POL>
++//   PDL   (K5) launched as a programmatic dependent. 1: the segment tables (route outputs, two or more launches
++//         back) are read with ld.global.cg and the first k tile's weight words are loaded (and the next PF_PDL
++//         k tiles prefetched into L2) BEFORE pdl_wait, so the weight stream starts while the preceding kernel
++//         (rot_in / gateup_epilogue) is still running; x (that kernel's output) is read only after the wait.
++//         2: pdl_wait first, nothing before it. 3: as 1 without the L2 prefetch. 4: as 1 with the L2 prefetch only in
++//         the first PF_PDL_BLOCKS launched blocks. 5: as 1 while P <= PF_PDL_SMALL_P (few waves: every block's
++//         head is exposed), else as 4. 0: not a dependent (no griddepcontrol at all).
++constexpr int PF_PDL = 3;
++constexpr unsigned PF_PDL_BLOCKS = 256;                        // ~ one wave of the grouped grid on 48 SMs
++constexpr int PF_PDL_SMALL_P = 64;                             // PDL 5: every block prefetches while P <= this
++
++template <int NT, int W, int ORD, int PIPE, int LEAN, int POL, int PDL = 0>
+ __global__ void __launch_bounds__(W * 32) grouped_kernel(
+     const half* __restrict__ X0, const half* __restrict__ X1, const int64_t* __restrict__ Tp0,
+     const int64_t* __restrict__ Tp1, const int* __restrict__ seg_expert, const int* __restrict__ seg_row0,
+     const int* __restrict__ seg_rows, const int* __restrict__ nseg, float* __restrict__ Z, int K, int N, int P,
+     int SK) {
++    if (PDL == 2) {                                            // dependent without a prologue: wait first
++        pdl_wait();
++        pdl_trigger();
++    }
+     const int s = ORD == 0 ? blockIdx.x : ORD == 1 ? blockIdx.y : blockIdx.z;
+     const int nblk = ORD == 0 ? blockIdx.y : blockIdx.x;
+     const int zidx = ORD == 2 ? blockIdx.y : blockIdx.z;
+-    if (s >= nseg[0]) return;                                  // block-uniform
++    constexpr bool PRO = PDL == 1 || PDL >= 3;                // weight prologue before the wait
++    if (s >= (PRO ? __ldcg(nseg) : nseg[0])) {                 // block-uniform
++        if (PRO) { pdl_wait(); pdl_trigger(); }
++        return;
++    }
+     const int split = zidx % SK, mat = zidx / SK;
+-    const int e = seg_expert[s], r0s = seg_row0[s], rn = seg_rows[s];
++    const int e = PRO ? __ldcg(seg_expert + s) : seg_expert[s];
++    const int r0s = PRO ? __ldcg(seg_row0 + s) : seg_row0[s];
++    const int rn = PRO ? __ldcg(seg_rows + s) : seg_rows[s];
+     const half* X = mat ? X1 : X0;
+     const uint32_t* T = reinterpret_cast<const uint32_t*>((mat ? Tp1 : Tp0)[e]);
+     const int warp = threadIdx.x >> 5, lane = threadIdx.x & 31;
+@@ -124,6 +163,27 @@ __global__ void __launch_bounds__(W * 32) grouped_kernel(
+     const int KT = K >> 4, NTILES = N >> 4;
+     uint64_t pol = 0;
+     if (POL) asm volatile("createpolicy.fractional.L2::evict_first.b64 %0, 1.0;" : "=l"(pol));
++    uint32_t w_first[NT];                                      // PDL 1/3/4: k tile kt0, loaded before the wait
++    if (PRO) {
++        const int per_warp0 = (KT / SK) / W;
++        const int kt0p = split * (KT / SK) + warp * per_warp0;
++        const uint32_t* tp = T + ((size_t)kt0p * NTILES + nblk * NT) * 32 + lane;
++#pragma unroll
++        for (int i = 0; i < NT; ++i) w_first[i] = ld_weight<POL>(tp + i * 32, pol);
++        const unsigned lin = blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * blockIdx.z);
++        // L2 prefetch of the next PF_PDL k tiles: PDL 1 every block, 3 none, 4 only the first-launched blocks (the
++        // ones that can overlap the preceding kernel; later blocks start after it has finished)
++        if (lane < NT && (PDL == 1 || (PDL == 4 && lin < PF_PDL_BLOCKS) ||
++                          (PDL == 5 && (P <= PF_PDL_SMALL_P || lin < PF_PDL_BLOCKS)))) {
++#pragma unroll
++            for (int d = 1; d <= PF_PDL; ++d)
++                if (d < per_warp0)
++                    asm volatile("prefetch.global.L2 [%0];" ::"l"(T + ((size_t)(kt0p + d) * NTILES + nblk * NT) * 32 +
++                                                                  lane * 32));
++        }
++        pdl_wait();
++        pdl_trigger();
++    }
+ 
+     __shared__ int rows_sh[16];
+     if (threadIdx.x < 16) rows_sh[threadIdx.x] = (int)threadIdx.x < rn ? r0s + (int)threadIdx.x : -1;
+@@ -184,7 +244,15 @@ __global__ void __launch_bounds__(W * 32) grouped_kernel(
+             mma_tile(wb, xb);
+         }
+     } else {
+-        for (int kt = kt0; kt < kt0 + per_warp; ++kt) {
++        int kt = kt0;
++        if (PRO) {                                             // k tile kt0 with the words loaded before the wait
++            uint32_t a[4];
++            load_x(kt, a);
++            mma_tile(w_first, a);
++            tile += kstride;
++            ++kt;
++        }
++        for (; kt < kt0 + per_warp; ++kt) {
+             uint32_t words[NT];
+ #pragma unroll
+             for (int i = 0; i < NT; ++i) words[i] = ld_weight<POL>(tile + i * 32, pol);
+@@ -322,6 +390,8 @@ __global__ void rot_in_kernel(const XT* __restrict__ x, int64_t x_stride, const
+                               const int* __restrict__ pair_expert, const int64_t* __restrict__ suh_p0,
+                               const int64_t* __restrict__ suh_p1, half* __restrict__ out0, half* __restrict__ out1,
+                               int K, int64_t B) {
++    pdl_wait();                                                // K5: every block, before any read or exit
++    pdl_trigger();
+     const int j = blockIdx.x, blk = blockIdx.y, mat = blockIdx.z;
+     const int lane = threadIdx.x;
+     const int e = pair_expert[j];
+@@ -363,6 +433,8 @@ __global__ void gateup_epilogue_kernel(const float* __restrict__ Z, const int* _
+                                        const int64_t* __restrict__ svh_pg, const int64_t* __restrict__ svh_pu,
+                                        const int64_t* __restrict__ suh_pd, half* __restrict__ xd, int P, int N,
+                                        int SK, float limit) {
++    pdl_wait();                                                // K5: every block, before any read or exit
++    pdl_trigger();
+     const int j = blockIdx.x, blk = blockIdx.y;
+     const int lane = threadIdx.x;
+     const int e = pair_expert[j];
+@@ -434,6 +506,8 @@ __global__ void down_epilogue_kernel(const float* __restrict__ Z, const int* __r
+                                      const int64_t* __restrict__ token_sorted, const half* __restrict__ weight_sorted,
+                                      const int64_t* __restrict__ svh_pd, float* __restrict__ out, int P, int D,
+                                      int SK, int64_t B) {
++    pdl_wait();                                                // K5: every block, before any read or exit
++    pdl_trigger();
+     const int j = blockIdx.x, blk = blockIdx.y;
+     const int lane = threadIdx.x;
+     const int e = pair_expert[j];
+@@ -503,6 +577,7 @@ __global__ void __launch_bounds__(1024) route_prep_kernel(const int64_t* __restr
+                                                           int* __restrict__ seg_rows, int* __restrict__ nseg_out) {
+     __shared__ long long tot64[32];
+     __shared__ int tot32[32];
++    pdl_trigger();                                             // K5: rot_in may launch now (it waits for this grid)
+     const int tid = threadIdx.x;
+     for (int j = tid; j < P; j += blockDim.x) pair_expert[j] = -1;
+     __syncthreads();                                           // §B.3 step 3: -1 fill before any "= e"
+@@ -559,6 +634,7 @@ __global__ void __launch_bounds__(1024) route_ids_kernel(
+     int* cnt = sh_counts;
+     int* cur = sh_counts + (n + 1);
+     __shared__ int tot32[32];
++    pdl_trigger();                                             // K5: rot_in may launch now (it waits for this grid)
+     const int tid = threadIdx.x;
+     for (int e = tid; e <= n; e += blockDim.x) cnt[e] = 0;
+     __syncthreads();
+@@ -623,6 +699,27 @@ __global__ void __launch_bounds__(1024) route_ids_kernel(
+ 
+ int64_t tf_s_cap(int64_t P, int64_t n) { return (P < n ? P : n) + (P + 15) / 16; }
+ 
++// Launch with cudaLaunchKernelEx; pdl = launch as a programmatic dependent of the previous kernel on the stream
++// (cudaLaunchAttributeProgrammaticStreamSerialization, K5). Captured into a CUDA graph, the dependency becomes a
++// programmatic edge.
++template <typename... KArgs, typename... Args>
++static void launch_k(void (*kern)(KArgs...), dim3 grid, dim3 block, size_t smem, cudaStream_t stream, bool pdl,
++                     Args... args) {
++    cudaLaunchConfig_t cfg = {};
++    cfg.gridDim = grid;
++    cfg.blockDim = block;
++    cfg.dynamicSmemBytes = smem;
++    cfg.stream = stream;
++    cudaLaunchAttribute attr[1];
++    attr[0].id = cudaLaunchAttributeProgrammaticStreamSerialization;
++    attr[0].val.programmaticStreamSerializationAllowed = 1;
++    cfg.attrs = attr;
++    cfg.numAttrs = pdl ? 1 : 0;
++    C10_CUDA_CHECK(cudaLaunchKernelEx(&cfg, kern, static_cast<KArgs>(args)...));
++}
++
++static bool pdl_on();
++
+ int tf_parity() { return TF_PARITY; }
+ 
+ static inline const int64_t* i64p(const at::Tensor& t) { return t.data_ptr<int64_t>(); }
+@@ -644,14 +741,14 @@ void launch_rot_in(const at::Tensor& x, int64_t x_stride, const at::Tensor& toke
+                    const at::Tensor& out0, const at::Tensor& out1, int64_t P, int64_t K, int64_t B) {
+     dim3 grid((unsigned)P, (unsigned)(K / 128), 2);
+     auto stream = at::cuda::getCurrentCUDAStream();
++    const bool pdl = pdl_on();
+     if (x.scalar_type() == at::kBFloat16)
+-        rot_in_kernel<__nv_bfloat16><<<grid, 32, 0, stream>>>(
+-            reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), x_stride, i64p(token_sorted), i32p(pair_expert),
+-            i64p(suh_p0), i64p(suh_p1), hp(out0), hp(out1), (int)K, B);
++        launch_k(rot_in_kernel<__nv_bfloat16>, grid, dim3(32), 0, stream, pdl,
++                 reinterpret_cast<const __nv_bfloat16*>(x.data_ptr()), x_stride, i64p(token_sorted), i32p(pair_expert),
++                 i64p(suh_p0), i64p(suh_p1), hp(out0), hp(out1), (int)K, B);
+     else
+-        rot_in_kernel<half><<<grid, 32, 0, stream>>>(hcp(x), x_stride, i64p(token_sorted), i32p(pair_expert),
+-                                                     i64p(suh_p0), i64p(suh_p1), hp(out0), hp(out1), (int)K, B);
+-    C10_CUDA_KERNEL_LAUNCH_CHECK();
++        launch_k(rot_in_kernel<half>, grid, dim3(32), 0, stream, pdl, hcp(x), x_stride, i64p(token_sorted),
++                 i32p(pair_expert), i64p(suh_p0), i64p(suh_p1), hp(out0), hp(out1), (int)K, B);
+ }
+ 
+ void launch_route_ids(const at::Tensor& ids, const at::Tensor* emap, const at::Tensor& weights, int64_t P,
+@@ -682,7 +779,7 @@ void launch_route_ids(const at::Tensor& ids, const at::Tensor* emap, const at::T
+ // variants; other tiles always run ORD 0.
+ // sktab: the split-count table moe_forward uses (kernels/exl3.cpp, tf_split_counts); variants with the same sktab
+ // compute bit-identical results, a different table changes only the fp32 summation tree of the split partials.
+-struct GroupedVariant { int ord, pipe, lean, pol, sktab; };
++struct GroupedVariant { int ord, pipe, lean, pol, sktab, pdl = 0; };
+ static const GroupedVariant kVariants[] = {
+     {1, 0, 0, 1, 1},   // 0 shipped: ORD 1 (K1) + evict_first weights (K3) + split-count table 1 (K6), docs/OPTIMIZATION.md
+     {0, 0, 0, 0, 0},   // 1 master
+@@ -696,6 +793,12 @@ static const GroupedVariant kVariants[] = {
+     {1, 0, 0, 1, 1},   // 9 shipped kernel, split-count table 1
+     {1, 0, 0, 1, 2},   // 10 shipped kernel, split-count table 2
+     {1, 0, 0, 1, 3},   // 11 shipped kernel, split-count table 3
++    {1, 0, 0, 1, 1, 1},   // 12 shipped + K5 PDL (rot_in / grouped / epilogues as programmatic dependents,
++                          //    grouped weight prologue before the wait)
++    {1, 0, 0, 1, 1, 2},   // 13 shipped + K5 PDL without the grouped weight prologue (wait first)
++    {1, 0, 0, 1, 1, 3},   // 14 shipped + K5 PDL, prologue without the L2 prefetch
++    {1, 0, 0, 1, 1, 4},   // 15 shipped + K5 PDL, L2 prefetch only in the first-launched blocks
++    {1, 0, 0, 1, 1, 5},   // 16 shipped + K5 PDL, L2 prefetch in every block at P <= 64, else first-launched only
+ };
+ constexpr int kNumVariants = sizeof(kVariants) / sizeof(kVariants[0]);
+ static int g_variant = 0;
+@@ -703,6 +806,7 @@ static int g_variant = 0;
+ int tf_num_variants() { return kNumVariants; }
+ int tf_variant() { return g_variant; }
+ int tf_sk_table() { return kVariants[g_variant].sktab; }
++static bool pdl_on() { return kVariants[g_variant].pdl != 0; }
+ int tf_variant_sk_table(int v) { return kVariants[v].sktab; }
+ void tf_set_variant(int v) {
+     TORCH_CHECK(v >= 0 && v < kNumVariants, "tf_exl3_moe: variant must be in [0, ", kNumVariants, ")");
+@@ -715,18 +819,29 @@ void launch_grouped(const at::Tensor& X0, const at::Tensor& X1, const at::Tensor
+                     int64_t SK, int64_t nt, int64_t warps, int64_t S_cap) {
+     auto stream = at::cuda::getCurrentCUDAStream();
+     const unsigned gs = (unsigned)S_cap, gn = (unsigned)(N / (16 * nt)), gz = (unsigned)(mats * SK);
+-#define TF_LAUNCH(NT_, W_, ORD_, PIPE_, LEAN_, POL_)                                                            \
++#define TF_LAUNCH_P(NT_, W_, ORD_, PIPE_, LEAN_, POL_, PDLK_, PDLA_)                                            \
+     do {                                                                                                     \
+         const dim3 grid = ORD_ == 0 ? dim3(gs, gn, gz) : ORD_ == 1 ? dim3(gn, gs, gz) : dim3(gn, gz, gs);    \
+-        grouped_kernel<NT_, W_, ORD_, PIPE_, LEAN_, POL_><<<grid, W_ * 32, 0, stream>>>(                      \
+-            hcp(X0), hcp(X1), i64p(Tp0), i64p(Tp1), i32p(seg_expert), i32p(seg_row0), i32p(seg_rows),         \
+-            i32p(nseg), Z.data_ptr<float>(), (int)K, (int)N, (int)P, (int)SK);                                \
++        launch_k(grouped_kernel<NT_, W_, ORD_, PIPE_, LEAN_, POL_, PDLK_>, grid, dim3(W_ * 32), 0, stream,   \
++                 PDLA_, hcp(X0), hcp(X1), i64p(Tp0), i64p(Tp1), i32p(seg_expert), i32p(seg_row0),             \
++                 i32p(seg_rows), i32p(nseg), Z.data_ptr<float>(), (int)K, (int)N, (int)P, (int)SK);           \
+     } while (0)
++#define TF_LAUNCH(NT_, W_, ORD_, PIPE_, LEAN_, POL_) TF_LAUNCH_P(NT_, W_, ORD_, PIPE_, LEAN_, POL_, 0, false)
+     if (nt == 4 && warps == 4) {
+         GroupedVariant v = kVariants[g_variant];
+         if (v.pipe && ((K / 16) / SK / 4) % 2 != 0) v.pipe = 0;   // double buffering needs an even tile count
+         if (v.ord != 0 && S_cap > 65535) v.ord = 0;                 // S_cap must fit gridDim.y / gridDim.z
+         const int code = v.ord * 8 + v.pipe * 4 + v.lean * 2 + v.pol;
++        if (v.pdl && code == 9) {                                  // K5: the shipped kernel as a dependent
++            if (v.pdl == 1) TF_LAUNCH_P(4, 4, 1, 0, 0, 1, 1, true);
++            else if (v.pdl == 3) TF_LAUNCH_P(4, 4, 1, 0, 0, 1, 3, true);
++            else if (v.pdl == 4) TF_LAUNCH_P(4, 4, 1, 0, 0, 1, 4, true);
++            else if (v.pdl == 5) TF_LAUNCH_P(4, 4, 1, 0, 0, 1, 5, true);
++            else TF_LAUNCH_P(4, 4, 1, 0, 0, 1, 2, true);
++            C10_CUDA_KERNEL_LAUNCH_CHECK();
++            return;
++        }
++        TORCH_CHECK(!v.pdl, "tf_exl3_moe: PDL variant needs the shipped grouped kernel");
+         switch (code) {
+             case 0: TF_LAUNCH(4, 4, 0, 0, 0, 0); break;
+             case 4: TF_LAUNCH(4, 4, 0, 1, 0, 0); break;
+@@ -744,6 +859,7 @@ void launch_grouped(const at::Tensor& X0, const at::Tensor& X1, const at::Tensor
+     else if (nt == 2 && warps == 8) TF_LAUNCH(2, 8, 0, 0, 0, 0);
+     else TORCH_CHECK(false, "unsupported tile setting");
+ #undef TF_LAUNCH
++#undef TF_LAUNCH_P
+     C10_CUDA_KERNEL_LAUNCH_CHECK();
+ }
+ 
+@@ -751,18 +867,16 @@ void launch_gateup_epilogue(const at::Tensor& Z, const at::Tensor& pair_expert,
+                             const at::Tensor& svh_pu, const at::Tensor& suh_pd, const at::Tensor& xd, int64_t P,
+                             int64_t N, int64_t SK, double limit) {
+     dim3 grid((unsigned)P, (unsigned)(N / 128));
+-    gateup_epilogue_kernel<<<grid, 32, 0, at::cuda::getCurrentCUDAStream()>>>(
+-        Z.data_ptr<float>(), i32p(pair_expert), i64p(svh_pg), i64p(svh_pu), i64p(suh_pd), hp(xd), (int)P, (int)N,
+-        (int)SK, (float)limit);
+-    C10_CUDA_KERNEL_LAUNCH_CHECK();
++    launch_k(gateup_epilogue_kernel, grid, dim3(32), 0, at::cuda::getCurrentCUDAStream(), pdl_on(),
++             (const float*)Z.data_ptr<float>(), (const int*)i32p(pair_expert), i64p(svh_pg), i64p(svh_pu),
++             i64p(suh_pd), hp(xd), (int)P, (int)N, (int)SK, (float)limit);
+ }
+ 
+ void launch_down_epilogue(const at::Tensor& Z, const at::Tensor& pair_expert, const at::Tensor& token_sorted,
+                           const at::Tensor& weight_sorted, const at::Tensor& svh_pd, const at::Tensor& out, int64_t P,
+                           int64_t D, int64_t SK, int64_t B) {
+     dim3 grid((unsigned)P, (unsigned)(D / 128));
+-    down_epilogue_kernel<<<grid, 32, 0, at::cuda::getCurrentCUDAStream()>>>(
+-        Z.data_ptr<float>(), i32p(pair_expert), i64p(token_sorted), hcp(weight_sorted), i64p(svh_pd),
+-        out.data_ptr<float>(), (int)P, (int)D, (int)SK, B);
+-    C10_CUDA_KERNEL_LAUNCH_CHECK();
++    launch_k(down_epilogue_kernel, grid, dim3(32), 0, at::cuda::getCurrentCUDAStream(), pdl_on(),
++             (const float*)Z.data_ptr<float>(), (const int*)i32p(pair_expert), i64p(token_sorted),
++             hcp(weight_sorted), i64p(svh_pd), out.data_ptr<float>(), (int)P, (int)D, (int)SK, B);
+ }

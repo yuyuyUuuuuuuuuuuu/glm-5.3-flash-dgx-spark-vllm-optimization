@@ -1,0 +1,57 @@
+#!/bin/sh
+# /usr/local/sbin/glm53-rail2 — second PCIe-half RoCE rails for the GLM-5.3 TP=2 link (nodeA <-> nodeB).
+# GB10's ConnectX-7 runs in multi-host mode: each port has a function on PCIe domain 0000 (enp1s0f*, already used)
+# and one on domain 0002 (enP2p1s0f*, down by default). Each half is a PCIe x4 link (~13.5 GB/s); NCCL using one
+# function per half roughly doubles inter-node bandwidth. Fixed actions only (safe for a NOPASSWD sudoers rule):
+# v2 (2026-09-28): NCCL uses rocep1s0f1 + roceP2p1s0f0 (two cables, both PCIe halves). Only enP2p1s0f0np0 is kept up;
+# enP2p1s0f1np1 is unused and each up netdev pins ~0.4 GiB of RX buffers (20 channels x 1024 x MTU 9000).
+#   up       enP2p1s0f1np1 down; enP2p1s0f0np0: RX rings trimmed (RoCE-only netdev), MTU 9000, up, $RAIL2_SUBNET.<n>/24
+#   down     enP2p1s0f0np0 down (the second rail stops; NCCL must be stopped or reconfigured first)
+#   trim     enP2p1s0f1np1 down now (safe while serving: nothing uses it)
+#   boot     (glm53-rail2.service, before docker) down + trimmed rings + up; the only place the rail is configured at boot
+#   status   show addresses and RoCE v2 IPv4 GID indices
+# <n> = last octet of this host's enp1s0f1np1 address (the head and the worker must differ).
+# EDIT RAIL2_SUBNET below: a free /24 prefix for the second rail, the same on both nodes (sudo does not pass env vars).
+set -eu
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+n=$(ip -4 -o addr show dev enp1s0f1np1 | awk '{print $4}' | cut -d/ -f1 | awk -F. '{print $4}')
+case "$n" in [0-9]|[0-9][0-9]|[0-9][0-9][0-9]) ;; *) echo "glm53-rail2: unexpected enp1s0f1np1 address (last octet '$n')" >&2; exit 2 ;; esac
+RAIL2_SUBNET=10.0.103
+PAIRS="enP2p1s0f0np0:$RAIL2_SUBNET"
+UNUSED="enP2p1s0f1np1"
+gids() {
+  for ib in /sys/class/net/$1/device/infiniband/*; do
+    ibn=$(basename "$ib")
+    for g in 0 1 2 3 4 5 6 7; do
+      t=$(cat "$ib/ports/1/gid_attrs/types/$g" 2>/dev/null || true); v=$(cat "$ib/ports/1/gids/$g" 2>/dev/null || true)
+      case "$t:$v" in "RoCE v2:0000:0000:0000:0000:0000:ffff:"*) echo "  $ibn RoCE v2 IPv4 GID index $g" ;; esac
+    done
+  done
+}
+case "${1:-status}" in
+  up)
+    for u in $UNUSED; do ip addr flush dev "$u"; ip link set dev "$u" down; done
+    for p in $PAIRS; do dev=${p%%:*}; net=${p#*:}
+      if [ "$(cat /sys/class/net/$dev/operstate)" != up ]; then     # rings only while the link is down
+        ethtool -L "$dev" combined 4 2>/dev/null || true; ethtool -G "$dev" rx 256 2>/dev/null || true
+      fi
+      ip link set dev "$dev" mtu 9000
+      ip link set dev "$dev" up
+      ip addr replace "$net.$n/24" dev "$dev"
+    done
+    sleep 3; "$0" status ;;
+  down)
+    for p in $PAIRS; do dev=${p%%:*}; ip addr flush dev "$dev"; ip link set dev "$dev" down; done
+    "$0" status ;;
+  trim)
+    for u in $UNUSED; do ip addr flush dev "$u"; ip link set dev "$u" down; done
+    "$0" status ;;
+  boot)
+    for p in $PAIRS; do dev=${p%%:*}; ip addr flush dev "$dev" 2>/dev/null || true; ip link set dev "$dev" down 2>/dev/null || true; done
+    "$0" up ;;
+  status)
+    for p in $PAIRS; do dev=${p%%:*}; echo "$dev: $(cat /sys/class/net/$dev/operstate) mtu $(cat /sys/class/net/$dev/mtu) $(ip -4 -o addr show dev $dev | awk '{print $4}') channels $(ethtool -l $dev 2>/dev/null | awk '/Current/{c=1} c&&/Combined/{print $2; exit}') rx $(ethtool -g $dev 2>/dev/null | awk '/Current/{c=1} c&&/^RX:/{print $2; exit}')"; gids "$dev"; done
+    for u in $UNUSED; do echo "$u (unused): $(cat /sys/class/net/$u/operstate)"; done
+    echo "boot service: $(systemctl is-enabled glm53-rail2.service 2>/dev/null; true)" ;;
+  *) echo "usage: glm53-rail2 up|down|trim|boot|status" >&2; exit 2 ;;
+esac

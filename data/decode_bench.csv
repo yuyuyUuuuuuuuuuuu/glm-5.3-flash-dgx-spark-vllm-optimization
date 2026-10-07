@@ -1,0 +1,160 @@
+date,time_jst,run,workload,concurrency,temperature,thinking,tokps_median,tokps_min,tokps_max,aggregate_tokps,accepted_per_step,drafted_per_step,ms_per_step_median,ttft_s,completion_tokens,stage,flag,source
+2026-09-27,20:30,baseline,prose,1,0,False,19.17,2.03,22.81,,1.80,4.36,77.34,0.50,200,09-27 early run before fork rollout,"contaminated (concurrent request suspected, min tok/s 2.0-2.2); not a reference",bench/baseline_prose.json
+2026-09-27,20:35,baseline,structured,1,0,False,38.86,29.69,40.95,,3.07,4.60,68.57,0.49,200,09-27 early run before fork rollout,"contaminated (concurrent request suspected, min tok/s 2.0-2.2); not a reference",bench/baseline_structured.json
+2026-09-27,20:36,baseline,coding,1,0,False,26.28,2.21,29.25,,2.22,4.54,71.73,0.55,172,09-27 early run before fork rollout,"contaminated (concurrent request suspected, min tok/s 2.0-2.2); not a reference",bench/baseline_coding.json
+2026-09-27,20:44,comp0,prose,1,0,False,21.39,19.60,22.67,,2.13,4.42,68.69,0.51,200,"09-27 early run, vm.compaction_proactiveness=0",contaminated; not a reference,bench/comp0_prose.json
+2026-09-27,20:45,comp0,structured,1,0,False,42.80,37.65,48.49,,5.08,6.07,76.29,0.54,200,"09-27 early run, vm.compaction_proactiveness=0",contaminated; not a reference,bench/comp0_structured.json
+2026-09-27,20:46,comp0,coding,1,0,False,27.54,2.13,38.20,,2.54,4.73,69.64,0.54,174,"09-27 early run, vm.compaction_proactiveness=0",contaminated; not a reference,bench/comp0_coding.json
+2026-09-27,22:28,A2-comp20,prose,1,0,False,31.00,20.59,34.47,,2.01,4.61,96.64,0.34,200,"A2: pre-rollout, compaction_proactiveness=20 (control)",,bench/A2-comp20_prose.json
+2026-09-27,22:29,A2-comp20,structured,1,0,False,73.60,43.49,74.02,,7.00,7.00,108.15,0.33,200,"A2: pre-rollout, compaction_proactiveness=20 (control)",,bench/A2-comp20_structured.json
+2026-09-27,22:30,A2-comp20,coding,1,0,False,37.75,26.01,48.18,,3.09,5.37,103.98,0.36,181,"A2: pre-rollout, compaction_proactiveness=20 (control)",,bench/A2-comp20_coding.json
+2026-09-27,22:32,B2-comp0,prose,1,0,False,31.53,29.60,34.21,,2.06,4.67,96.65,0.25,200,"B2: pre-rollout reference (13 h / 14 d uptime, KV 1M)",reference for before/after,bench/B2-comp0_prose.json
+2026-09-27,22:33,B2-comp0,coding,1,0,False,39.45,37.79,48.07,,3.15,5.50,104.82,0.36,176,"B2: pre-rollout reference (13 h / 14 d uptime, KV 1M)",reference for before/after,bench/B2-comp0_coding.json
+2026-09-27,22:33,B2-comp0,structured,1,0,False,73.51,70.56,73.85,,7.00,7.00,108.29,0.32,200,"B2: pre-rollout reference (13 h / 14 d uptime, KV 1M)",reference for before/after,bench/B2-comp0_structured.json
+2026-09-27,23:25,R0-kv1m-fresh,prose,1,0,False,31.88,17.18,34.34,,2.07,4.68,95.12,0.34,200,"R0: both nodes rebooted, KV 1M",,bench/R0-kv1m-fresh_prose.json
+2026-09-27,23:27,R0-kv1m-fresh,coding,1,0,False,40.76,37.13,46.72,,3.21,5.47,102.66,0.36,170,"R0: both nodes rebooted, KV 1M",,bench/R0-kv1m-fresh_coding.json
+2026-09-27,23:27,R0-kv1m-fresh,structured,1,0,False,75.01,74.55,75.27,,7.00,7.00,106.13,0.32,200,"R0: both nodes rebooted, KV 1M",,bench/R0-kv1m-fresh_structured.json
+2026-09-27,23:50,R1-fork,prose,1,0,False,35.57,33.61,39.64,,2.02,4.63,84.76,0.28,200,R1: TF EXL3 MoE decode kernel fork + independent resample noise,,bench/R1-fork_prose.json
+2026-09-27,23:51,R1-fork,structured,1,0,False,84.86,80.88,85.29,,7.00,7.00,93.77,0.27,200,R1: TF EXL3 MoE decode kernel fork + independent resample noise,,bench/R1-fork_structured.json
+2026-09-27,23:52,R1-fork,coding,1,0,False,46.25,42.58,51.82,,3.22,5.47,91.08,0.31,168,R1: TF EXL3 MoE decode kernel fork + independent resample noise,,bench/R1-fork_coding.json
+2026-09-28,00:04,R2-fp8,prose,1,0,False,38.35,35.42,39.29,,2.12,4.66,80.87,0.21,200,R2: + dense FP8 for MLA and shared experts,,bench/R2-fp8_prose.json
+2026-09-28,00:05,R2-fp8,coding,1,0,False,48.01,44.43,55.56,,3.21,5.48,87.36,0.30,186,R2: + dense FP8 for MLA and shared experts,,bench/R2-fp8_coding.json
+2026-09-28,00:05,R2-fp8,structured,1,0,False,87.85,87.48,89.01,,7.00,7.00,90.61,0.27,200,R2: + dense FP8 for MLA and shared experts,,bench/R2-fp8_structured.json
+2026-09-28,00:16,R3-draftfp8,prose,1,0,False,40.04,36.74,43.06,,2.11,4.63,77.20,0.27,200,R3: + drafter FP8 linears + drafter lm_head FP8 copy,,bench/R3-draftfp8_prose.json
+2026-09-28,00:17,R3-draftfp8,coding,1,0,False,51.14,45.35,56.93,,3.43,5.62,86.14,0.30,178,R3: + drafter FP8 linears + drafter lm_head FP8 copy,,bench/R3-draftfp8_coding.json
+2026-09-28,00:17,R3-draftfp8,structured,1,0,False,91.37,90.11,92.88,,7.00,7.00,87.12,0.26,200,R3: + drafter FP8 linears + drafter lm_head FP8 copy,,bench/R3-draftfp8_structured.json
+2026-09-28,00:35,R5-final,prose,1,0,False,39.91,38.89,43.38,,2.12,4.67,77.82,0.27,200,R5: overnight final state (R3 + per-rank env fixes),,bench/R5-final_prose.json
+2026-09-28,00:36,R5-final,structured,1,0,False,91.39,90.91,91.90,,7.00,7.00,87.10,0.26,200,R5: overnight final state (R3 + per-rank env fixes),,bench/R5-final_structured.json
+2026-09-28,00:37,R5-final,coding,1,0,False,47.87,44.28,51.25,,3.02,5.39,83.26,0.29,200,R5: overnight final state (R3 + per-rank env fixes),,bench/R5-final_coding.json
+2026-09-28,09:33,R5-now,prose,1,0,False,38.60,37.99,41.06,,2.02,4.65,77.61,0.27,200,R5 re-measured next morning,,bench/R5-now_prose.json
+2026-09-28,09:34,R5-now,coding,1,0,False,47.37,44.19,55.05,,2.96,5.32,83.21,0.29,186,R5 re-measured next morning,,bench/R5-now_coding.json
+2026-09-28,09:34,R5-now,structured,1,0,False,91.86,90.69,92.47,,7.00,7.00,86.65,0.26,200,R5 re-measured next morning,,bench/R5-now_structured.json
+2026-09-28,09:44,R6,prose,1,0,False,39.24,34.19,40.89,,2.07,4.62,76.99,0.27,200,R6: KV 2M + memprep + host memory hygiene,node A swapped 3.5 GB,bench/R6_prose.json
+2026-09-28,09:45,R6,coding,1,0,False,50.18,45.62,61.29,,3.23,5.44,84.09,0.30,187,R6: KV 2M + memprep + host memory hygiene,node A swapped 3.5 GB,bench/R6_coding.json
+2026-09-28,09:45,R6,structured,1,0,False,92.01,62.68,92.46,,7.00,7.00,86.51,0.26,200,R6: KV 2M + memprep + host memory hygiene,node A swapped 3.5 GB,bench/R6_structured.json
+2026-09-28,09:56,R7,prose,1,0,False,39.72,38.44,44.18,,2.11,4.67,77.59,0.25,200,R7: + NCCL_NCHANNELS=8,,bench/R7_prose.json
+2026-09-28,09:57,R7,coding,1,0,False,48.02,43.25,57.27,,3.01,5.34,82.75,0.28,186,R7: + NCCL_NCHANNELS=8,,bench/R7_coding.json
+2026-09-28,09:57,R7,structured,1,0,False,92.07,91.45,92.25,,7.00,7.00,86.46,0.25,200,R7: + NCCL_NCHANNELS=8,,bench/R7_structured.json
+2026-09-28,10:15,R8,prose,1,0,False,39.61,37.85,45.12,,2.08,4.64,76.78,0.21,200,R8: + drafter fc FP8 + spin-wait 16 ms,,bench/R8_prose.json
+2026-09-28,10:16,R8,structured,1,0,False,92.14,90.61,92.59,,7.00,7.00,86.39,0.27,200,R8: + drafter fc FP8 + spin-wait 16 ms,,bench/R8_structured.json
+2026-09-28,10:17,R8,coding,1,0,False,47.89,45.88,57.83,,3.02,5.42,84.07,0.29,200,R8: + drafter fc FP8 + spin-wait 16 ms,,bench/R8_coding.json
+2026-09-28,10:43,R9b,prose,1,0,False,40.05,36.84,43.49,,2.05,4.62,75.98,0.25,200,R9b: + target lm_head FP8,,bench/R9b_prose.json
+2026-09-28,10:44,R9b,structured,1,0,False,93.38,92.32,94.34,,7.00,7.00,85.25,0.26,200,R9b: + target lm_head FP8,,bench/R9b_structured.json
+2026-09-28,10:45,R9b,coding,1,0,False,58.72,48.94,63.43,,4.10,6.10,85.58,0.28,186,R9b: + target lm_head FP8,,bench/R9b_coding.json
+2026-09-28,10:59,R10,prose,1,0,False,39.84,36.90,45.27,,2.01,4.63,75.23,0.21,200,R10: NCCL_NCHANNELS 8->4 (A/B arm),reverted,bench/R10_prose.json
+2026-09-28,11:00,R10,coding,1,0,False,59.81,47.05,63.03,,4.15,6.20,85.72,0.28,185,R10: NCCL_NCHANNELS 8->4 (A/B arm),reverted,bench/R10_coding.json
+2026-09-28,11:00,R10,structured,1,0,False,93.75,92.83,94.94,,7.00,7.00,84.91,0.26,200,R10: NCCL_NCHANNELS 8->4 (A/B arm),reverted,bench/R10_structured.json
+2026-09-28,11:27,R11,prose,1,0,False,40.64,37.74,42.27,,2.09,4.67,75.88,0.21,200,R11: NCCL 8; E3 grouped fat-expert prefill kernels,,bench/R11_prose.json
+2026-09-28,11:28,R11,coding,1,0,False,50.27,44.46,54.87,,3.20,5.52,82.97,0.28,192,R11: NCCL 8; E3 grouped fat-expert prefill kernels,,bench/R11_coding.json
+2026-09-28,11:28,R11,structured,1,0,False,93.30,91.77,94.11,,7.00,7.00,85.32,0.26,200,R11: NCCL 8; E3 grouped fat-expert prefill kernels,,bench/R11_structured.json
+2026-09-28,12:17,R12,prose,1,0,False,40.59,36.92,42.27,,2.05,4.62,74.22,0.22,200,R12: + FP8 GEMV (M<=16) + BF16 router GEMV,,bench/R12_prose.json
+2026-09-28,12:18,R12,coding,1,0,False,52.88,44.19,62.71,,3.26,5.54,80.93,0.28,183,R12: + FP8 GEMV (M<=16) + BF16 router GEMV,,bench/R12_coding.json
+2026-09-28,12:18,R12,structured,1,0,False,94.35,93.04,95.05,,7.00,7.00,84.36,0.26,200,R12: + FP8 GEMV (M<=16) + BF16 router GEMV,,bench/R12_structured.json
+2026-09-28,14:00,R13,prose,1,0,False,41.66,38.22,43.60,,2.09,4.62,74.01,0.26,200,R13: + prefill fused cap + kpool seed-stride fix,,bench/R13_prose.json
+2026-09-28,14:01,R13,coding,1,0,False,55.85,45.30,66.33,,3.59,5.76,81.84,0.28,180,R13: + prefill fused cap + kpool seed-stride fix,,bench/R13_coding.json
+2026-09-28,14:01,R13,structured,1,0,False,94.85,94.60,95.04,,7.00,7.00,83.92,0.26,200,R13: + prefill fused cap + kpool seed-stride fix,,bench/R13_structured.json
+2026-09-28,14:25,R14,prose,1,0,False,41.53,39.89,42.91,,2.09,4.63,73.78,0.26,200,R14: + two-rail RoCE (2 PCIe domains),,bench/R14_prose.json
+2026-09-28,14:26,R14,structured,1,0,False,95.47,94.83,96.13,,7.00,7.00,83.38,0.26,200,R14: + two-rail RoCE (2 PCIe domains),,bench/R14_structured.json
+2026-09-28,14:27,R14,coding,1,0,False,60.94,46.45,66.68,,4.20,6.20,83.92,0.29,176,R14: + two-rail RoCE (2 PCIe domains),,bench/R14_coding.json
+2026-09-28,14:46,R15,prose,1,0,False,41.25,31.08,43.66,,2.08,4.61,73.56,0.22,200,R15: restart with GID auto-detect; KL reference state,,bench/R15_prose.json
+2026-09-28,14:47,R15,coding,1,0,False,54.81,42.97,60.81,,3.53,5.66,81.80,0.28,186,R15: restart with GID auto-detect; KL reference state,,bench/R15_coding.json
+2026-09-28,14:47,R15,structured,1,0,False,95.27,94.73,95.85,,7.00,7.00,83.55,0.25,200,R15: restart with GID auto-detect; KL reference state,,bench/R15_structured.json
+2026-09-29,09:41,r16b,prose,1,0,False,41.88,39.84,43.16,,2.12,4.65,73.32,0.24,200,R16b: first R16 bundle,reverted (decode-state corruption),bench/r16b_prose.json
+2026-09-29,09:42,r16b,coding,1,0,False,56.83,50.17,68.43,,3.68,5.84,81.72,0.29,185,R16b: first R16 bundle,reverted (decode-state corruption),bench/r16b_coding.json
+2026-09-29,09:42,r16b,structured,1,0,False,95.98,94.98,97.15,,7.00,7.00,82.94,0.26,200,R16b: first R16 bundle,reverted (decode-state corruption),bench/r16b_structured.json
+2026-09-29,15:23,r16e,prose,1,0,False,40.85,38.85,45.01,,1.97,4.59,72.40,0.27,200,R16e: interim diagnostic build,switch set not recorded,bench/r16e_prose.json
+2026-09-29,15:24,r16e,structured,1,0,False,95.72,91.37,96.23,,7.00,7.00,83.16,0.26,200,R16e: interim diagnostic build,switch set not recorded,bench/r16e_structured.json
+2026-09-29,15:25,r16e,coding,1,0,False,59.65,49.70,66.37,,3.98,6.21,83.34,0.29,172,R16e: interim diagnostic build,switch set not recorded,bench/r16e_coding.json
+2026-09-29,15:38,r16f,prose,1,0,False,41.31,40.26,42.72,,2.03,4.63,72.80,0.25,200,R16f: L2 pre-read (FP8ROOF + MOEGLUE warm),rejected,bench/r16f_prose.json
+2026-09-29,15:39,r16f,coding,1,0,False,55.90,47.17,66.24,,3.60,5.73,81.69,0.29,178,R16f: L2 pre-read (FP8ROOF + MOEGLUE warm),rejected,bench/r16f_coding.json
+2026-09-29,15:39,r16f,structured,1,0,False,95.43,93.50,96.69,,7.00,7.00,83.41,0.27,200,R16f: L2 pre-read (FP8ROOF + MOEGLUE warm),rejected,bench/r16f_structured.json
+2026-09-29,15:49,r16g,prose,1,0,False,37.67,35.39,41.18,,2.09,4.67,81.93,0.26,200,R16g: L2 pre-read with CTA 8->2,rejected,bench/r16g_prose.json
+2026-09-29,15:50,r16g,structured,1,0,False,87.87,86.91,88.48,,7.00,7.00,90.58,0.26,200,R16g: L2 pre-read with CTA 8->2,rejected,bench/r16g_structured.json
+2026-09-29,15:51,r16g,coding,1,0,False,52.42,43.23,60.79,,3.76,5.87,90.20,0.30,180,R16g: L2 pre-read with CTA 8->2,rejected,bench/r16g_coding.json
+2026-09-29,15:59,r16h,prose,1,0,False,42.46,38.45,45.63,,2.14,4.66,73.65,0.21,200,R16h: interim diagnostic build,switch set not recorded,bench/r16h_prose.json
+2026-09-29,16:00,r16h,coding,1,0,False,54.91,48.52,62.57,,3.95,6.04,83.79,0.28,183,R16h: interim diagnostic build,switch set not recorded,bench/r16h_coding.json
+2026-09-29,16:00,r16h,structured,1,0,False,95.78,95.05,96.12,,7.00,7.00,83.10,0.26,200,R16h: interim diagnostic build,switch set not recorded,bench/r16h_structured.json
+2026-09-30,00:10,r16j-opt,prose,1,0,False,41.63,38.40,46.64,,2.06,4.65,73.90,0.24,200,R16j-opt: block verification + kpool ring + hostloop + fixed MLA prefill + APC fix,,bench/r16j-opt_prose.json
+2026-09-30,00:11,r16j-opt,coding,1,0,False,58.23,44.87,66.18,,3.87,6.01,83.08,0.28,180,R16j-opt: block verification + kpool ring + hostloop + fixed MLA prefill + APC fix,,bench/r16j-opt_coding.json
+2026-09-30,00:11,r16j-opt,structured,1,0,False,94.75,93.74,96.08,,7.00,7.00,84.01,0.25,200,R16j-opt: block verification + kpool ring + hostloop + fixed MLA prefill + APC fix,,bench/r16j-opt_structured.json
+2026-09-30,00:47,dspark-fp8-ak,prose,1,0,False,35.82,33.52,40.42,,1.75,4.45,76.44,0.24,200,"DSpark preview drafter, fp8 drafter KV + adaptive K",rejected,bench/dspark-fp8-ak_prose.json
+2026-09-30,00:48,dspark-fp8-ak,coding,1,0,False,46.49,43.37,49.95,,2.91,5.27,83.10,0.29,172,"DSpark preview drafter, fp8 drafter KV + adaptive K",rejected,bench/dspark-fp8-ak_coding.json
+2026-09-30,00:48,dspark-fp8-ak,structured,1,0,False,79.57,77.62,84.17,,6.12,7.00,87.85,0.27,200,"DSpark preview drafter, fp8 drafter KV + adaptive K",rejected,bench/dspark-fp8-ak_structured.json
+2026-09-30,03:26,draftfp8-off,prose,1,0,False,40.04,36.50,44.69,,2.08,4.65,76.81,0.22,200,drafter FP8 removed (bf16 drafter) A/B arm,rejected,bench/draftfp8-off_prose.json
+2026-09-30,03:27,draftfp8-off,coding,1,0,False,49.41,45.53,64.11,,3.12,5.41,82.79,0.30,193,drafter FP8 removed (bf16 drafter) A/B arm,rejected,bench/draftfp8-off_coding.json
+2026-09-30,03:27,draftfp8-off,structured,1,0,False,92.36,91.48,93.92,,7.00,7.00,86.18,0.27,200,drafter FP8 removed (bf16 drafter) A/B arm,rejected,bench/draftfp8-off_structured.json
+2026-09-30,12:10,wake-A,prose,1,0,False,41.83,37.35,43.48,,2.07,4.62,73.19,0.24,200,HOSTLOOP_WAKE A/B: off,,bench/wake-A_prose.json
+2026-09-30,12:11,wake-A,structured,1,0,False,95.77,95.06,96.81,,7.00,7.00,83.11,0.25,200,HOSTLOOP_WAKE A/B: off,,bench/wake-A_structured.json
+2026-09-30,12:12,wake-A,coding,1,0,False,54.23,50.00,62.89,,3.39,5.69,80.96,0.28,180,HOSTLOOP_WAKE A/B: off,,bench/wake-A_coding.json
+2026-09-30,12:20,wake-B,prose,1,0,False,41.58,40.15,47.08,,2.02,4.61,72.49,0.20,200,HOSTLOOP_WAKE A/B: auto,adopted,bench/wake-B_prose.json
+2026-09-30,12:20,wake-B,structured,1,0,False,96.83,94.16,97.42,,7.00,7.00,82.20,0.24,200,HOSTLOOP_WAKE A/B: auto,adopted,bench/wake-B_structured.json
+2026-09-30,12:21,wake-B,coding,1,0,False,61.09,47.70,64.74,,4.03,6.03,82.30,0.27,184,HOSTLOOP_WAKE A/B: auto,adopted,bench/wake-B_coding.json
+2026-09-30,18:37,r16k-A,prose,1,0,False,41.42,38.42,43.69,,2.03,4.64,72.67,0.20,200,r16k A/B arm A (= r16j + WAKE),,bench/r16k-A_prose.json
+2026-09-30,18:38,r16k-A,structured,1,0,False,96.31,94.59,97.27,,7.00,7.00,82.65,0.24,200,r16k A/B arm A (= r16j + WAKE),,bench/r16k-A_structured.json
+2026-09-30,18:39,r16k-A,coding,1,0,False,61.02,47.94,64.27,,4.12,6.23,83.14,0.26,182,r16k A/B arm A (= r16j + WAKE),,bench/r16k-A_coding.json
+2026-09-30,19:25,r16k-B,prose,1,0,False,42.78,40.60,45.91,,2.12,4.66,72.64,0.23,200,r16k A/B arm B (+ KDA strided QKV),adopted,bench/r16k-B_prose.json
+2026-09-30,19:26,r16k-B,coding,1,0,False,56.68,47.26,66.74,,3.58,5.69,80.37,0.27,180,r16k A/B arm B (+ KDA strided QKV),adopted,bench/r16k-B_coding.json
+2026-09-30,19:26,r16k-B,structured,1,0,False,96.50,95.97,97.52,,7.00,7.00,82.49,0.23,200,r16k A/B arm B (+ KDA strided QKV),adopted,bench/r16k-B_structured.json
+2026-09-30,21:15,kv2m-mb16k,prose,1,0,False,42.05,38.67,43.40,,2.07,4.63,72.96,0.19,200,KV 2M pool + MNBT 16384,,bench/kv2m-mb16k_prose.json
+2026-09-30,21:16,kv2m-mb16k,structured,1,0,False,96.13,93.92,97.13,,7.00,7.00,82.80,0.24,200,KV 2M pool + MNBT 16384,,bench/kv2m-mb16k_structured.json
+2026-09-30,21:17,kv2m-mb16k,coding,1,0,False,56.37,44.40,66.97,,3.54,5.66,81.77,0.26,192,KV 2M pool + MNBT 16384,,bench/kv2m-mb16k_coding.json
+2026-09-30,21:43,kv1m-mb32k,prose,1,0,False,41.30,40.22,44.56,,2.05,4.63,73.27,0.22,200,KV 1M pool + MNBT 32256,rejected,bench/kv1m-mb32k_prose.json
+2026-09-30,21:44,kv1m-mb32k,coding,1,0,False,51.64,45.98,61.04,,3.17,5.45,79.72,0.27,186,KV 1M pool + MNBT 32256,rejected,bench/kv1m-mb32k_coding.json
+2026-09-30,21:44,kv1m-mb32k,structured,1,0,False,95.99,91.77,97.05,,7.00,7.00,82.92,0.25,200,KV 1M pool + MNBT 32256,rejected,bench/kv1m-mb32k_structured.json
+2026-10-01,03:21,r16l-off,prose,1,0,False,41.58,40.63,44.04,,2.02,4.64,72.53,0.24,200,"r16l kit, kpool drop-lowest off",,bench/r16l-off_prose.json
+2026-10-01,03:22,r16l-off,structured,1,0,False,96.58,95.89,97.59,,7.00,7.00,82.42,0.23,200,"r16l kit, kpool drop-lowest off",,bench/r16l-off_structured.json
+2026-10-01,03:23,r16l-off,coding,1,0,False,61.74,48.94,67.35,,4.12,6.17,82.38,0.26,186,"r16l kit, kpool drop-lowest off",,bench/r16l-off_coding.json
+2026-10-01,04:15,r16l-on,prose,1,0,False,41.72,39.78,43.20,,2.07,4.63,73.06,0.24,200,"r16l kit, kpool drop-lowest on",reverted,bench/r16l-on_prose.json
+2026-10-01,04:16,r16l-on,coding,1,0,False,54.99,47.50,65.50,,3.47,5.62,80.71,0.26,178,"r16l kit, kpool drop-lowest on",reverted,bench/r16l-on_coding.json
+2026-10-01,04:16,r16l-on,structured,1,0,False,95.99,95.50,97.08,,7.00,7.00,82.93,0.24,200,"r16l kit, kpool drop-lowest on",reverted,bench/r16l-on_structured.json
+2026-10-01,20:07,r16n-fk,prose,1,0,False,42.00,40.82,47.63,,2.10,4.65,73.04,0.22,200,r16n: + FlashKDA chunked prefill,,bench/r16n-fk_prose.json
+2026-10-01,20:08,r16n-fk,structured,1,0,False,96.06,93.86,96.46,,7.00,7.00,82.87,0.24,200,r16n: + FlashKDA chunked prefill,,bench/r16n-fk_structured.json
+2026-10-01,20:09,r16n-fk,coding,1,0,False,54.33,47.88,62.67,,3.44,5.57,80.54,0.27,193,r16n: + FlashKDA chunked prefill,,bench/r16n-fk_coding.json
+2026-10-02,06:04,r16x-msp,prose,1,0,False,41.71,39.89,44.12,,2.06,4.63,72.96,0.20,200,r16x: + sequence-parallel mHC prefill,,bench/r16x-msp_prose.json
+2026-10-02,06:05,r16x-msp,coding,1,0,False,56.68,46.08,64.42,,3.64,5.83,81.47,0.26,184,r16x: + sequence-parallel mHC prefill,,bench/r16x-msp_coding.json
+2026-10-02,06:05,r16x-msp,structured,1,0,False,95.91,95.11,97.27,,7.00,7.00,82.99,0.24,200,r16x: + sequence-parallel mHC prefill,,bench/r16x-msp_structured.json
+2026-10-02,07:59,r16x-e4m3,prose,1,0,False,42.30,40.90,44.73,,2.12,4.67,72.93,0.23,200,r16x + e4m3 routed-MoE prefill,operator-accepted KL increase,bench/r16x-e4m3_prose.json
+2026-10-02,08:00,r16x-e4m3,coding,1,0,False,60.06,46.87,64.60,,3.96,6.00,81.99,0.26,186,r16x + e4m3 routed-MoE prefill,operator-accepted KL increase,bench/r16x-e4m3_coding.json
+2026-10-02,08:00,r16x-e4m3,structured,1,0,False,96.21,95.68,97.02,,7.00,7.00,82.74,0.23,200,r16x + e4m3 routed-MoE prefill,operator-accepted KL increase,bench/r16x-e4m3_structured.json
+2026-10-02,16:09,r16z2-base,prose,1,0,False,42.12,39.62,46.04,,2.07,4.63,72.67,0.22,200,r16z2 W8A8 A/B base,,bench/r16z2-base_prose.json
+2026-10-02,16:10,r16z2-base,structured,1,0,False,96.15,95.83,97.28,,7.00,7.00,82.78,0.24,200,r16z2 W8A8 A/B base,,bench/r16z2-base_structured.json
+2026-10-02,16:11,r16z2-base,coding,1,0,False,58.83,47.48,66.09,,3.81,5.86,80.93,0.26,183,r16z2 W8A8 A/B base,,bench/r16z2-base_coding.json
+2026-10-02,16:30,r16z2-all,prose,1,0,False,41.89,39.49,45.49,,2.06,4.65,72.91,0.22,200,r16z2 W8A8 on all dense projections,rejected (dvp gate),bench/r16z2-all_prose.json
+2026-10-02,16:31,r16z2-all,coding,1,0,False,57.39,50.60,62.79,,3.67,5.81,80.68,0.26,183,r16z2 W8A8 on all dense projections,rejected (dvp gate),bench/r16z2-all_coding.json
+2026-10-02,16:31,r16z2-all,structured,1,0,False,96.32,95.90,97.22,,7.00,7.00,82.64,0.23,200,r16z2 W8A8 on all dense projections,rejected (dvp gate),bench/r16z2-all_structured.json
+2026-10-02,16:50,r16z2-sub,prose,1,0,False,41.58,36.64,43.24,,2.05,4.61,73.12,0.25,200,r16z2 W8A8 on kda.in_proj + mla.o_proj,adopted,bench/r16z2-sub_prose.json
+2026-10-02,16:50,r16z2-sub,structured,1,0,False,95.97,94.64,96.61,,7.00,7.00,82.94,0.23,200,r16z2 W8A8 on kda.in_proj + mla.o_proj,adopted,bench/r16z2-sub_structured.json
+2026-10-02,16:51,r16z2-sub,coding,1,0,False,59.86,46.70,63.19,,3.91,5.93,82.24,0.26,180,r16z2 W8A8 on kda.in_proj + mla.o_proj,adopted,bench/r16z2-sub_coding.json
+2026-10-04,15:55,kl-ja-run1-garbled,ja,1,0,False,27.74,27.74,27.74,,1.21,4.45,67.04,0.38,200,Japanese bench under KDA_LAZY v1,garbled output (v1 bug),bench/kl-ja-run1-garbled.json
+2026-10-04,15:55,kl-ja-run2,ja,1,0,False,32.64,32.64,32.64,,1.33,4.49,66.27,0.41,200,Japanese bench under KDA_LAZY v1,,bench/kl-ja-run2.json
+2026-10-04,15:55,kl-ja-run3,ja,1,0,False,37.54,37.54,37.54,,1.58,4.36,67.95,0.19,200,Japanese bench under KDA_LAZY v1,,bench/kl-ja-run3.json
+2026-10-04,16:06,z6rev-base4,prose,1,0,False,42.34,40.86,46.53,,2.12,4.68,73.44,0.22,200,"r16z6rev base, first 4-workload reference",,bench/z6rev-base4_prose.json
+2026-10-04,16:07,z6rev-base4,coding,1,0,False,59.93,54.94,64.24,,4.09,6.25,83.81,0.24,200,"r16z6rev base, first 4-workload reference",,bench/z6rev-base4_coding.json
+2026-10-04,16:07,z6rev-base4,structured,1,0,False,96.67,91.84,96.74,,7.00,7.00,82.34,0.24,200,"r16z6rev base, first 4-workload reference",,bench/z6rev-base4_structured.json
+2026-10-04,16:08,z6rev-base4,ja,1,0,False,40.26,38.48,43.25,,1.79,4.46,69.25,0.22,200,"r16z6rev base, first 4-workload reference",,bench/z6rev-base4_ja.json
+2026-10-04,19:55,conc,prose,1,0,False,43.80,38.11,44.26,,2.23,4.71,73.28,0.19,200,concurrency scaling (r16z6rev-kl2 era),ms/step column is the serving-cycle ratio divided across streams,bench/conc-prose-1.json
+2026-10-04,19:55,conc,prose,2,0,False,31.73,30.36,34.36,60.53,2.12,4.47,49.00,0.26,400,concurrency scaling (r16z6rev-kl2 era),ms/step column is the serving-cycle ratio divided across streams,bench/conc-prose-2.json
+2026-10-04,19:55,conc,prose,4,0,False,22.74,22.48,22.96,85.00,2.16,4.43,33.99,0.45,800,concurrency scaling (r16z6rev-kl2 era),ms/step column is the serving-cycle ratio divided across streams,bench/conc-prose-4.json
+2026-10-04,19:56,conc,prose,8,0,False,17.46,17.31,17.46,131.31,2.20,4.45,22.70,0.45,1600,concurrency scaling (r16z6rev-kl2 era),ms/step column is the serving-cycle ratio divided across streams,bench/conc-prose-8.json
+2026-10-04,19:57,conc,coding,1,0,False,58.18,55.27,60.51,,3.94,6.16,84.27,0.26,153,concurrency scaling (r16z6rev-kl2 era),ms/step column is the serving-cycle ratio divided across streams,bench/conc-coding-1.json
+2026-10-04,19:57,conc,coding,2,0,False,44.30,41.17,44.90,81.92,3.81,5.91,54.80,0.37,400,concurrency scaling (r16z6rev-kl2 era),ms/step column is the serving-cycle ratio divided across streams,bench/conc-coding-2.json
+2026-10-04,19:57,conc,coding,4,0,False,37.12,35.74,40.60,136.50,3.82,5.75,31.72,0.42,800,concurrency scaling (r16z6rev-kl2 era),ms/step column is the serving-cycle ratio divided across streams,bench/conc-coding-4.json
+2026-10-04,19:57,conc,coding,8,0,False,26.19,23.71,28.08,192.25,3.49,5.10,22.09,0.40,1539,concurrency scaling (r16z6rev-kl2 era),ms/step column is the serving-cycle ratio divided across streams,bench/conc-coding-8.json
+2026-10-04,23:07,kdalazy-v2-prod,prose,1,0,False,45.40,41.33,48.83,,2.30,4.78,72.33,0.24,200,production after KDA_LAZY v2,,bench/kdalazy-v2-prod_prose.json
+2026-10-04,23:08,kdalazy-v2-prod,structured,1,0,False,99.35,97.86,100.07,,7.00,7.00,80.12,0.23,200,production after KDA_LAZY v2,,bench/kdalazy-v2-prod_structured.json
+2026-10-04,23:09,kdalazy-v2-prod,coding,1,0,False,59.90,56.12,62.19,,3.95,6.16,81.97,0.24,200,production after KDA_LAZY v2,,bench/kdalazy-v2-prod_coding.json
+2026-10-04,23:09,kdalazy-v2-prod,ja,1,0,False,40.34,36.02,43.15,,1.73,4.43,67.67,0.24,200,production after KDA_LAZY v2,,bench/kdalazy-v2-prod_ja.json
+2026-10-05,08:51,prof1005,prose,1,0,False,32.98,22.53,43.44,,2.11,4.59,104.26,0.40,300,run used during 2-rank profile,profiler attached,bench/prof1005-prose.json
+2026-10-05,10:01,ablit-on,prose,1,0,False,44.67,42.44,48.45,,2.27,4.76,72.89,0.24,200,after o_proj transplant (ABLIT=1),coding run contaminated,bench/ablit-on_prose.json
+2026-10-05,10:02,ablit-on,coding,1,0,False,40.50,36.72,63.30,,2.19,4.41,51.43,0.37,200,after o_proj transplant (ABLIT=1),coding run contaminated,bench/ablit-on_coding.json
+2026-10-05,10:02,ablit-on,structured,1,0,False,97.91,43.97,98.56,,7.00,7.00,81.30,0.24,200,after o_proj transplant (ABLIT=1),coding run contaminated,bench/ablit-on_structured.json
+2026-10-05,10:03,ablit-on,ja,1,0,False,42.91,39.20,44.57,,1.94,4.53,68.21,0.24,200,after o_proj transplant (ABLIT=1),coding run contaminated,bench/ablit-on_ja.json
+2026-10-05,10:16,ablit-on2,coding,1,0,False,61.62,50.54,70.23,,3.99,6.07,81.15,0.27,200,"after o_proj transplant (ABLIT=1), coding re-run",,bench/ablit-on2_coding.json
+2026-10-05,12:39,kpooltail-prod,prose,1,0,False,41.42,38.61,46.57,,2.00,4.65,72.41,0.19,200,production after KPOOL_TAIL_POSITIONS=2,,bench/kpooltail-prod_prose.json
+2026-10-05,12:40,kpooltail-prod,structured,1,0,False,98.64,97.15,99.23,,7.00,7.00,80.70,0.24,200,production after KPOOL_TAIL_POSITIONS=2,,bench/kpooltail-prod_structured.json
+2026-10-05,12:41,kpooltail-prod,coding,1,0,False,60.30,54.46,68.28,,3.96,6.11,81.41,0.22,200,production after KPOOL_TAIL_POSITIONS=2,,bench/kpooltail-prod_coding.json
+2026-10-05,12:41,kpooltail-prod,ja,1,0,False,42.48,40.36,43.73,,1.90,4.52,68.01,0.24,200,production after KPOOL_TAIL_POSITIONS=2,,bench/kpooltail-prod_ja.json
+2026-10-05,17:30,vtrim-prod,prose,1,0,False,46.58,41.28,48.36,,2.17,4.70,67.82,0.22,200,current production (r16z8p + VTRIM tau 0.3),current,bench/vtrim-prod_prose.json
+2026-10-05,17:31,vtrim-prod,structured,1,0,False,99.44,98.20,99.98,,7.00,7.00,80.05,0.24,200,current production (r16z8p + VTRIM tau 0.3),current,bench/vtrim-prod_structured.json
+2026-10-05,17:32,vtrim-prod,coding,1,0,False,62.61,53.57,65.52,,3.87,6.07,77.91,0.26,200,current production (r16z8p + VTRIM tau 0.3),current,bench/vtrim-prod_coding.json
+2026-10-05,17:32,vtrim-prod,ja,1,0,False,45.47,43.69,47.17,,1.86,4.48,62.54,0.25,200,current production (r16z8p + VTRIM tau 0.3),current,bench/vtrim-prod_ja.json

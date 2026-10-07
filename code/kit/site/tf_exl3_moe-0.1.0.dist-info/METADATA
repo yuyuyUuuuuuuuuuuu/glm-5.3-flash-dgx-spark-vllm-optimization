@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: tf-exl3-moe
+Version: 0.1.0
+Summary: TensorFold EXL3 routed-expert kernels as a drop-in for exllamav3_ext.exl3_moe (vLLM decode)
+License: AGPL-3.0-only
+Dynamic: license
+Dynamic: summary

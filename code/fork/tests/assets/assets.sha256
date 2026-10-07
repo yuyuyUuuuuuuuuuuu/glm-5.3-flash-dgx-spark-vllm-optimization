@@ -1,0 +1,2 @@
+2bcbe6be5cc0f7da19894853e42248e2b85805bf5fb16dfa2812cb7eddc232e6  vllm-patches/cuda.py.exl3.patched
+526399d812d5579cb0ba53cfc3ec048f433ca3a7519ffbd4a773f96a21394e9a  vllm-patches/flashinfer_mla_sparse_sm90.py.patched

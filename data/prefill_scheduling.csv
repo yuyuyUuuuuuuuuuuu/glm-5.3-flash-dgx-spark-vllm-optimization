@@ -1,0 +1,30 @@
+date,experiment,setting,metric,value,unit,conditions,status,source
+2026-09-02,MNBT first try,max_num_batched_tokens=7168,prefill_100k,1184,tok/s,"EXL3 TP=2, DFlash2 k=7, recipe settings of that day (mixed-prefill and max-num-seqs not recorded), single request",control,operator notes (no raw log)
+2026-09-02,MNBT first try,max_num_batched_tokens=7168,ttft_100k,162.3,s,same,control,operator notes (no raw log)
+2026-09-02,MNBT first try,max_num_batched_tokens=7168,ttft_short_prompt,0.49,s,same,control,operator notes (no raw log)
+2026-09-02,MNBT first try,max_num_batched_tokens=16384,prefill_100k,889,tok/s,same,reverted,operator notes (no raw log)
+2026-09-02,MNBT first try,max_num_batched_tokens=16384,ttft_100k,216.1,s,same,reverted,operator notes (no raw log)
+2026-09-02,MNBT first try,max_num_batched_tokens=16384,ttft_short_prompt,13.1,s,same,reverted,operator notes (no raw log)
+2026-09-06,mixed-prefill chunk sweep,GLM53_MIXED_PREFILL_CHUNK=skip,per_stream_decode,18.9,tok/s,"16 fixed jobs, parallel 8, 3 runs each; ITL 271 ms",later retracted,sweep-results.txt (node A)
+2026-09-06,mixed-prefill chunk sweep,GLM53_MIXED_PREFILL_CHUNK=1024,per_stream_decode,15.5,tok/s,same; ITL 316 ms,rejected,sweep-results.txt (node A)
+2026-09-06,mixed-prefill chunk sweep,GLM53_MIXED_PREFILL_CHUNK=7168,per_stream_decode,11.4,tok/s,same; ITL 454 ms,rejected,sweep-results.txt (node A)
+2026-09-06,mixed-prefill chunk sweep,GLM53_MIXED_PREFILL_CHUNK=0 (off),per_stream_decode,10.7,tok/s,same; ITL 451 ms,rejected (that day),sweep-results.txt (node A)
+2026-09-06,mixed-prefill chunk sweep,GLM53_MIXED_PREFILL_CHUNK=2048,per_stream_decode,3.9,tok/s,same; ITL 1284 ms,rejected,sweep-results.txt (node A)
+2026-09-06,mixed-prefill chunk sweep,GLM53_MIXED_PREFILL_CHUNK=3584,per_stream_decode,6.2,tok/s,same; ITL 874 ms,rejected,sweep-results.txt (node A)
+2026-09-07,MNBT re-sweep,MNBT=2048,prefill_100k / 256k / 386k,882 / 883 / 876,tok/s,"MAX_NUM_SEQS=8, MAX_MODEL_LEN=512000, k=7, mixed=skip; 4-parallel wall 235.9 s",rejected,operator notes (harness lost)
+2026-09-07,MNBT re-sweep,MNBT=7168,prefill_100k / 256k / 386k,958 / 939 / 927,tok/s,same; 4-parallel wall 217.8 s,rejected,operator notes (harness lost)
+2026-09-07,MNBT re-sweep,MNBT=8192,prefill_100k / 256k / 386k,972 / 959 / 936,tok/s,same; 4-parallel wall 213.3 s,rejected,operator notes (harness lost)
+2026-09-07,MNBT re-sweep,MNBT=16384,prefill_100k / 256k / 386k,1203 / 1184 / 1168,tok/s,same; 4-parallel wall 172.1 s,adopted,operator notes (harness lost)
+2026-09-07,MNBT re-sweep,MNBT=32768,prefill_16k,666,tok/s,same; CUDA illegal memory access (EngineDeadError) at ~40k,rejected,operator notes (harness lost)
+2026-09-07,APC on long context,470k-token context,ttft cold / warm,417-547 / 2.4-2.5,s,prefix cache hit on repeat,info,operator notes
+2026-09-07,mixed-prefill 2nd metric,MNBT=16384 chunk=skip,3-job total / interactive median,377 / 83.4,s,3 heavy jobs in parallel + one short interactive request during them,rejected,operator notes (harness lost)
+2026-09-07,mixed-prefill 2nd metric,MNBT=16384 chunk=0,3-job total / interactive median,244 / 0.76,s,same,adopted,operator notes (harness lost)
+2026-09-07,mixed-prefill 2nd metric,MNBT=16384 chunk=same-width,3-job total / interactive median,265 / 0.78,s,same,rejected,operator notes (harness lost)
+2026-09-07,mixed-prefill 2nd metric,MNBT=8192 chunk=skip,3-job total / interactive median,324 / 58.7,s,same,rejected,operator notes (harness lost)
+2026-09-07,mixed-prefill 2nd metric,MNBT=8192 chunk=0,3-job total / interactive median,277 / 0.71,s,same,rejected,operator notes (harness lost)
+2026-09-07,mixed-prefill 2nd metric,MNBT=2048 chunk=skip,3-job total / interactive median,381 / 3.57,s,same,rejected,operator notes (harness lost)
+2026-09-07,mixed-prefill 2nd metric,MNBT=2048 chunk=0,3-job total / interactive median,292 / 2.90,s,same,rejected,operator notes (harness lost)
+2026-09-24,chunk=0 side effect,MNBT=16384 chunk=0 (production),10-s windows with generation < 1 tok/s,402 of 1065 (38%),windows,"3 h of production traffic; 300k+ contexts prefill ~760 tok/s so one 16k chunk ~20 s",diagnosis,operator notes
+2026-09-24,chunk=0 side effect,MNBT=16384 chunk=0 (production),steps of 10-40 s,0.63% of steps = 37% of decode time,share,"ITL histogram of 803,642 steps",diagnosis,operator notes
+2026-09-30,KV vs MNBT,KV 2M pool (16106127360 B) + MNBT 16384,gate32k / gate128k,1846-1853 / 1836-1837,tok/s,"idle, cold, kindling gate script; min MemAvailable node A 3.99 / node B 3.48 GiB",adopted (unchanged),r16k-ab/kv/run.log
+2026-09-30,KV vs MNBT,KV 8.25 GiB (1006289 tok) + MNBT 32256,gate32k / gate128k,1849-1851 / 1828-1831,tok/s,"same; min MemAvailable node A 1.73 / node B 2.97 GiB",rejected,r16k-ab/kv/run.log

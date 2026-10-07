@@ -1,0 +1,16 @@
+date,lever,switch,measured_on,before,after,unit,saving_note,production_ab,source
+2026-09-28,prefill quickwins (6 exact items),quickwins,node C (single GB10),,,ms/13824 chunk,-263 ms (+2.5%),in R16i,PREFILL_QUICKWINS.md
+2026-09-28,sparse-MLA prefill kernel,MLA prefill,node C,99.8,28.6,ms/layer at 13824 rows,-0.81 s/chunk (+8%),in R16i (after kv_indices fix),MLA_PREFILL.md
+2026-09-28,FP8 large-M Marlin,FP8 large-M,node C,2436,811,ms per 15.6k prompt,-1.63 s (+10%),by R15,FP8_LARGE_M.md
+2026-10-01,FlashKDA chunked prefill (fp32 state),GLM53_KDA_FLASHKDA=1,node C,,,ms/13824 chunk,"-548..-562 ms; 3.38-3.82x per KDA layer vs Triton chain",gate32k 1860 -> 2001-2018,KDA_FLASHKDA.md
+2026-10-02,sequence-parallel mHC,GLM53_MHC_SP=1,node C,913,470,ms/chunk,-444 ms,gate32k +5-6%,MHC_SP.md
+2026-10-02,e4m3 routed MoE prefill,GLM53_MOE_E4M3=1,node C,64.6,42.7,ms/layer,-0.92 s/chunk,real 15k +16%; KL up (operator-accepted),MOE_E4M3.md
+2026-10-02,dense W8A8,GLM53_DENSE_W8A8=1,node C,1342,823,ms/chunk (all projections),-519 ms,subset adopted (+6.8% gate),DENSE_W8A8.md
+2026-10-03,MoE e4m3 bf16 accumulate,GLM53_MOE_E4M3_ACC=bf16,node C,,,ms/layer,-7.0,with FOLD+MAINLOOP +9.9% gate,OPT_MOE.md
+2026-10-03,fold shared expert into MoE,GLM53_MOE_FOLD_SHARED=1,node C,,,ms/layer,-2.05,same bundle,OPT_MOE.md
+2026-10-03,token gather,TOKGATHER,node C,,,ms/layer,-1.24,new kit default,OPT_MOE.md
+2026-10-03,leaner e4m3 mainloop,GLM53_MOE_E4M3_MAINLOOP=1,node C,,,ms/layer,-2.4..-2.7,alone +1.4% (below margin); in bundle,OPT_MOE2.md
+2026-10-03,fp8 all-gather of KDA in_proj input,GLM53_DENSE_W8A8_FP8AG=1,node C,0.770,0.389,ms per KDA layer quant,~-130 ms/chunk,gate +2.1% (2982.5 -> 3046),OPT_DENSE.md
+2026-10-03,fused mHC post + prenorm,GLM53_MHC_FUSED=1,node C,9.92,8.38,ms per call (13824 rows),-70 ms/chunk,gate 2921.5 -> 2988.5,OPT_KDAMHC.md
+2026-10-03,indexer gate fix (NaN-aware per-M),idx_gate,node C,,,ms/chunk,-32 ms (was silently off in production),kit default,OPT_KDAMHC.md
+2026-10-03,MLA fused index pass,MLA_PREFILL_FUSED_INDEX,node C,33.00,30.28,ms/layer,-70 ms per 32k,kit default (+1.5% gate with TOKGATHER),OPT_KDAMHC.md

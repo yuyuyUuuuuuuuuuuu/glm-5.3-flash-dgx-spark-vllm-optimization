@@ -1,0 +1,14 @@
+c286213fce553a3980c0e86e583173eb0d1ef5d755324638ea30a29bed363adc  ./overlay/_flashkda_fp32_C.abi3.so
+dd1788c24f10af2c90c776b355ef44991b786dd8a2bc708459f81603c58cd484  ./overlay/_flashkda_fp32_C2.abi3.so
+d98adc4aec0046a294caebac32df5f974c07e239a9d29bac64f37233024ce394  ./overlay/_flashkda_fp32_C3.abi3.so
+1d742be35ec7babdfb7da0e84497b1327b98f8d6dfad593152874e0e1d5fcb42  ./overlay/glm53_mhc_fused_ext.cpython-312-aarch64-linux-gnu.so
+430481151b91cb739dd4ff948039c7f7792ef62c1e46178f2750e1022c214dc1  ./overlay/glm53_moe_e4m3_ext.cpython-312-aarch64-linux-gnu.so
+5891e5186979565e4acc99bbd8f252fff6f52a7fddeeb58b923862b884ff1d66  ./overlay/tf_fp8_w8a8_ext.cpython-312-aarch64-linux-gnu.so
+ed70d9a11ba963575082e9b15e14c7e0f9cf8b867e4002a508c0a7a1faf43223  ./site/glm53_gemv_ext.cpython-312-aarch64-linux-gnu.so
+b3335f1d56ad92a4ade234431593c8bdff367ab244ae18609be4d2a6bedcd36b  ./site/glm53_mla_prefill_ext.cpython-312-aarch64-linux-gnu.so
+1bf121a6bba7a1f5030a7e786f61bbc8d59e4cfcfa1c1a4f37a2ad69f22b8c5b  ./site/glm53_smallops_ext.cpython-312-aarch64-linux-gnu.so
+da2f50145bb1fe55abd781b963c957ea9b8176ac3e6c10c0673473b9351a44e4  ./site/tf_dlmh_ext.cpython-312-aarch64-linux-gnu.so
+55914afa525fc3bdeffdeffea0c63c2ec5cbac1ab6df99d33922205f57bb2ab0  ./site/tf_exl3_moe_ext.cpython-312-aarch64-linux-gnu.so
+086151d17cf9b250a428614cff2d695950cad9ad2a1cd39f11778e63797c18ad  ./site/tf_fp8_gemv_ext.cpython-312-aarch64-linux-gnu.so
+d6434904e31bfe7c26147b2a5b50ca823c6fd28b15442e82354f3670012810fd  ./site/tf_fp8_large_m_ext.cpython-312-aarch64-linux-gnu.so
+5622fe56d43c20123fd037d87664dbb2b5fad81163f5a36fd54d24140c07ca98  ./site/tf_fp8_roof_ext.cpython-312-aarch64-linux-gnu.so

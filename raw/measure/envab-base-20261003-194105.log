@@ -1,0 +1,55 @@
+== [envab-base-20261003-194105] 2026-10-03 19:48:13 mem nodeA: avail 4G swap 2522M | nodeB: avail 4G
+== decode (bench_decode x10)
+[envab-base-20261003-194105] start 19:48:13 running=0.0 pgmigrate_fail 9575971 compact_stall 1259705  proactive=0 avail_gb=4
+[envab-base-20261003-194105] prose      tok/s med 41.4 (min 39.81 max 45.5) acc/step 2.05 ms/step 73.03
+[envab-base-20261003-194105] structured tok/s med 95.86 (min 94.56 max 96.74) acc/step 7.0 ms/step 83.04
+[envab-base-20261003-194105] coding     tok/s med 59.4 (min 48.26 max 66.31) acc/step 3.95 ms/step 82.18
+[envab-base-20261003-194105] end 19:50:07 running=0.0 pgmigrate_fail 9576514 compact_stall 1259705  proactive=0 avail_gb=4
+== decode stream gaps
+[envab-base-20261003-194105-2k] chunks 567 decode 40.8s | gap p50 71 p90 78 p99 87 max 138 ms | gaps>200ms: 0 sum 0.0s
+[envab-base-20261003-194105-2k] big gaps at chunk idx: []
+[envab-base-20261003-194105-40k] chunks 590 decode 42.9s | gap p50 72 p90 78 p99 90 max 114 ms | gaps>200ms: 0 sum 0.0s
+[envab-base-20261003-194105-40k] big gaps at chunk idx: []
+== prefill real text
+[envab-base-20261003-194105] real-text prefill ~8496 tok: 3.29s, 3.20s, 3.30s -> median 2579 tok/s
+[envab-base-20261003-194105] real-text prefill ~14810 tok: 5.17s, 5.64s, 5.36s -> median 2902 tok/s
+== prefill random 24k
+[envab-base-20261003-194105] prefill ~24029 tok: 8.09s, 8.03s, 8.07s -> median 2976 tok/s
+== APC 40k (repeat + turn2)
+turn1: prompt 39036 cached 0 e2e 14.6s hits+0 queries+39036
+repeat: prompt 39036 cached 36864 e2e 2.6s hits+36864 queries+39036
+turn2: prompt 39049 cached 36864 e2e 2.4s hits+36864 queries+39049
+== APC 97k repeat (fresh 591 case)
+[envab-base-20261003-194105-apc97k] cold: prompt 97359 cached 0 completion 64 ttft 32.57s decode 1.19s steps 15 -> 79.6 ms/step, 3.87 tok/step, 53.6 tok/s
+[envab-base-20261003-194105-apc97k] warm: prompt 97359 cached 96768 completion 64 ttft 0.78s decode 1.17s steps 15 -> 78.3 ms/step, 4.40 tok/step, 54.5 tok/s
+== kpool decode-vs-prefill
+text 0: prompt 6842 tokens, generated 1536
+text 1: prompt 5202 tokens, generated 1536
+text 2: prompt 8350 tokens, generated 1536
+${HOME}/tf-exl3-deploy/kpool-after-envab-base-20261003-194105.json (2026-10-03 19:55:27): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.03116  top-1 agree 96.88%
+  gen pos [128, 512): n=1152  KL mean 0.01769  top-1 agree 97.05%
+  gen pos [512, 1024): n=1536  KL mean 0.02477  top-1 agree 96.55%
+  gen pos [1024, 1536): n=1536  KL mean 0.02123  top-1 agree 96.68%
+  all: n=4608  KL mean 0.02235  top-1 agree 96.74%
+${HOME}/tf-exl3-deploy/kpool-before-r15.json (2026-09-28 19:05:13): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.00646  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.00654  top-1 agree 98.18%
+  gen pos [512, 1024): n=1536  KL mean 0.00622  top-1 agree 98.37%
+  gen pos [1024, 1536): n=1536  KL mean 0.00602  top-1 agree 98.76%
+  all: n=4608  KL mean 0.00625  top-1 agree 98.48%
+${HOME}/tf-exl3-deploy/kpool-after-envab-base-20261003-194105.json (2026-10-03 19:55:27): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.03116  top-1 agree 96.88%
+  gen pos [128, 512): n=1152  KL mean 0.01769  top-1 agree 97.05%
+  gen pos [512, 1024): n=1536  KL mean 0.02477  top-1 agree 96.55%
+  gen pos [1024, 1536): n=1536  KL mean 0.02123  top-1 agree 96.68%
+  all: n=4608  KL mean 0.02235  top-1 agree 96.74%
+KL mean before 0.00625 -> after 0.02235 (+257.4%)
+== quality long vs R15
+text 2: 15954 positions
+long-context (positions >= 4608, n=28275): KL mean 0.0151 p95 0.0565 max 5.170 | top-1 agree 98.51%
+== quality short vs R15
+wrote Q_envab-base-20261003-194105.json: 20 decode, 6 prefill texts
+decode: identical 4/20; first divergence token idx median 36 min 0; |dlogprob| on shared prefix mean 2.07e-02 max 6.35e-01 (n=833)
+prefill KL(A||B) nats/token over top-20 union: mean 0.0200 p95 0.0729 max 2.5630 (n=962)
+== [envab-base-20261003-194105] done 2026-10-03 19:56:37 mem nodeA: avail 4G swap 2551M

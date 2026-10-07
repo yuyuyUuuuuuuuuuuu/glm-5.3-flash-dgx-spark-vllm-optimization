@@ -1,0 +1,11 @@
+{
+ "prose_tcp": "Explain in detail how TCP congestion control works, including slow start, congestion avoidance, fast retransmit and fast recovery. Be thorough.",
+ "prose_pkc": "Describe the principles and history of public-key cryptography, from Diffie-Hellman to RSA and elliptic curves, in a clear explanatory essay.",
+ "prose_sleep": "Write an essay explaining why sleep matters for learning and memory, covering what happens in the brain during different sleep stages.",
+ "ja_tcp": "TCPの輻輳制御の仕組みを、スロースタート、輻輳回避、高速再送、高速リカバリを含めて、日本語で詳しく説明してください。",
+ "ja_pkc": "公開鍵暗号の原理と歴史を、ディフィー・ヘルマンからRSA、楕円曲線暗号まで、日本語でわかりやすく説明してください。",
+ "ja_sleep": "睡眠が学習と記憶にとってなぜ重要なのか、睡眠段階ごとに脳で何が起きているかを含めて、日本語で解説文を書いてください。",
+ "coding_lru": "Write a Python class LRUCache with get and put methods that run in O(1) time, using a dict and a doubly linked list. Include docstrings.",
+ "coding_debounce": "Write a JavaScript function debounce(fn, wait) with a cancel method, plus a short usage example and comments.",
+ "coding_csv": "Write a Rust function that parses one CSV line into a Vec<String>, handling quoted fields and escaped quotes. Include unit tests."
+}

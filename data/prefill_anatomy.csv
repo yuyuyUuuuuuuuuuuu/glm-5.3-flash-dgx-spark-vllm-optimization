@@ -1,0 +1,15 @@
+snapshot_date,config,chunk_tokens,chunk_ms,component,ms,share,conditions,source
+2026-09-28,R12 era,16026 (13824 + 2202),,EXL3 fat GEMM (routed MoE),,23.6%,"16k cold, rank 0",PRODUCTION_RESULT.md
+2026-09-28,R12 era,16026,,FP8 Marlin (KDA in_proj at 28.5 TFLOPS: N>4096 splits M into 1024-row launches),,18.8%,same,PRODUCTION_RESULT.md
+2026-09-28,R12 era,16026,,MLA,,8.9%,same,PRODUCTION_RESULT.md
+2026-09-28,R12 era,16026,,KDA,,7.7%,same,PRODUCTION_RESULT.md
+2026-09-28,R12 era,16026,,mHC,,7.2%,same,PRODUCTION_RESULT.md
+2026-09-28,R12 era,16026,,NCCL,,6.9%,same,PRODUCTION_RESULT.md
+2026-09-30,R16J-opt (32k gauge 1864),13824,7310,MoE routed,2511,34.3%,"step-0 trace, SM clock 2164-2197 MHz (no throttling), GPU idle 0.3%",prefill3000/step0/ANATOMY.md
+2026-09-30,R16J-opt,13824,7310,dense + shared,1411,19.3%,same,prefill3000/step0/ANATOMY.md
+2026-09-30,R16J-opt,13824,7310,KDA,1033,14.1%,same,prefill3000/step0/ANATOMY.md
+2026-09-30,R16J-opt,13824,7310,mHC,882,12.1%,same,prefill3000/step0/ANATOMY.md
+2026-09-30,R16J-opt,13824,7310,MLA + indexer,589,8.1%,same,prefill3000/step0/ANATOMY.md
+2026-09-30,R16J-opt,13824,7310,NCCL (5.4 ms x 91 calls = 168 Gb/s; 5-8% waiting),525,7.2%,same,prefill3000/step0/ANATOMY.md
+2026-09-30,R16J-opt,13824,7310,glue,249,3.4%,same,prefill3000/step0/ANATOMY.md
+2026-09-30,R16J-opt,13824,7310,other,109,1.5%,same,prefill3000/step0/ANATOMY.md

@@ -1,0 +1,17 @@
+--- a/vllm/entrypoints/openai/responses/utils.py
++++ b/vllm/entrypoints/openai/responses/utils.py
+@@ -332,7 +332,13 @@
+                     prev_assistant_msg["content"] = text
+                     return None
+             return {"role": "assistant", "content": text}
+-    return item  # type: ignore[arg-type]
++    if isinstance(item, dict):
++        return item  # type: ignore[arg-type]
++    # ★2026-09-05 patch: unknown pydantic items (e.g. AdditionalTools)
++    #   must not be appended as chat messages; the next iteration calls .get() on
++    #   them and raises AttributeError (HTTP 500 on every such turn with tool history).
++    logger.warning("Skipping unsupported response input item type %s", type(item).__name__)
++    return None
+ 
+ 
+ def extract_function_tool_names(tools: list[Tool]) -> frozenset[str]:

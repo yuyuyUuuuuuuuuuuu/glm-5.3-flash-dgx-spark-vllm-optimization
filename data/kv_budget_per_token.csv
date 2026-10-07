@@ -1,0 +1,6 @@
+component,bytes_per_token,share,note,source
+MLA KV (12 layers x 656 B),7872,88%,"656 B is a literal in the sparse-MLA kernel (GLM_NSA=656) with an FFI size check; the all-zero RoPE region cannot be dropped without kernel changes",operator notes (14 GiB pool era)
+DFlash2 drafter KV,880,10%,bf16 drafter KV,operator notes
+indexer keys (fp8),132,1.5%,already fp8; fp4 indexer cache unsupported on SM12x,operator notes
+mamba/KDA state padding,4.6,<0.1%,"cache block 4608 tokens forced by mamba page size",operator notes
+total (measured pool),8905,100%,"later 7931 B/token at the 1M window",operator notes

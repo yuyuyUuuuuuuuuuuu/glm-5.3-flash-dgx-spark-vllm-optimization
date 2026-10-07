@@ -1,0 +1,52 @@
+#!/bin/sh
+# /usr/local/sbin/glm53-rail2 — second PCIe-half RoCE rails for the GLM-5.3 TP=2 link (nodeA <-> nodeB).
+# GB10's ConnectX-7 runs in multi-host mode: each port has a function on PCIe domain 0000 (enp1s0f*, already used)
+# and one on domain 0002 (enP2p1s0f*, down by default). Each half is a PCIe x4 link (~13.5 GB/s); NCCL using one
+# function per half roughly doubles inter-node bandwidth. Fixed actions only (safe for a NOPASSWD sudoers rule):
+#   up       MTU 9000, link up, 10.0.102.<n>/24 on enP2p1s0f1np1 and 10.0.103.<n>/24 on enP2p1s0f0np0
+#   down     remove those addresses and set the links down
+#   persist  write /etc/netplan/99-cx7-p2.yaml with the same (takes effect at boot; nothing is applied now)
+#   status   show addresses and RoCE v2 IPv4 GID indices
+# <n> = last octet of this host's enp1s0f1np1 address (nodeA .2, nodeB .3).
+# 10.0.102.0/24 and 10.0.103.0/24 are example rail subnets; set PAIRS to your own.
+set -eu
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+n=$(ip -4 -o addr show dev enp1s0f1np1 | awk '{print $4}' | cut -d/ -f1 | awk -F. '{print $4}')
+case "$n" in 2|3) ;; *) echo "glm53-rail2: unexpected enp1s0f1np1 address (last octet '$n')" >&2; exit 2 ;; esac
+PAIRS="enP2p1s0f1np1:10.0.102 enP2p1s0f0np0:10.0.103"
+gids() {
+  for ib in /sys/class/net/$1/device/infiniband/*; do
+    ibn=$(basename "$ib")
+    for g in 0 1 2 3 4 5 6 7; do
+      t=$(cat "$ib/ports/1/gid_attrs/types/$g" 2>/dev/null || true); v=$(cat "$ib/ports/1/gids/$g" 2>/dev/null || true)
+      case "$t:$v" in "RoCE v2:0000:0000:0000:0000:0000:ffff:"*) echo "  $ibn RoCE v2 IPv4 GID index $g" ;; esac
+    done
+  done
+}
+case "${1:-status}" in
+  up)
+    for p in $PAIRS; do dev=${p%%:*}; net=${p#*:}
+      ip link set dev "$dev" mtu 9000
+      ip link set dev "$dev" up
+      ip addr replace "$net.$n/24" dev "$dev"
+    done
+    sleep 3; "$0" status ;;
+  down)
+    for p in $PAIRS; do dev=${p%%:*}; ip addr flush dev "$dev"; ip link set dev "$dev" down; done
+    "$0" status ;;
+  persist)
+    umask 077
+    {
+      echo "# glm53-rail2: second PCIe-half RoCE rails for the GLM-5.3 TP=2 link (see /usr/local/sbin/glm53-rail2)"
+      echo "network:"; echo "  version: 2"; echo "  ethernets:"
+      for p in $PAIRS; do dev=${p%%:*}; net=${p#*:}
+        echo "    $dev:"; echo "      mtu: 9000"; echo "      addresses: [$net.$n/24]"
+      done
+    } > /etc/netplan/99-cx7-p2.yaml
+    chmod 600 /etc/netplan/99-cx7-p2.yaml
+    echo "wrote /etc/netplan/99-cx7-p2.yaml (applies at boot; run 'glm53-rail2 up' for now)" ;;
+  status)
+    for p in $PAIRS; do dev=${p%%:*}; echo "$dev: $(cat /sys/class/net/$dev/operstate) mtu $(cat /sys/class/net/$dev/mtu) $(ip -4 -o addr show dev $dev | awk '{print $4}')"; gids "$dev"; done
+    [ -f /etc/netplan/99-cx7-p2.yaml ] && echo "persist: /etc/netplan/99-cx7-p2.yaml present" || echo "persist: none" ;;
+  *) echo "usage: glm53-rail2 up|down|persist|status" >&2; exit 2 ;;
+esac

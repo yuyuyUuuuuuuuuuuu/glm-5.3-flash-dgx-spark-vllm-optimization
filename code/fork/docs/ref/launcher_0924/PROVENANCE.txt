@@ -1,0 +1,32 @@
+Inputs of the thin-decode comparison (docs/STATUS.md E.5 [2]/[3], tests/run_thin_ab.sh). Nothing here comes from
+nodeA/nodeB: the .so was built on nodeC on 2026-09-19 in the production image, from public sources.
+
+Persisted binaries (git-ignored, under artifacts/ in this repo; moved out of the session /tmp scratchpads 2026-09-27):
+  50e915073d39356ec8cbd6d451ffaf897c2476831d035de2194dcc920578509f  artifacts/thin_decode/exllamav3_ext.thin.so
+      the thin-decode exllamav3_ext (glm53_fast_moe_version() == 1); its python package is identical to the image's,
+      and the image's own extension it replaces is 7d6eb20ac755e4f793c3a04889581a21ed4e1c352b6d201556e4634bd2524f90
+  87cf1ed1abad0fd2eb84744418e6a2ea3ec09a874552c1a3e0f226eac03cb8f9  artifacts/thin_decode/exllamav3-c5d9c65.tar.gz
+      exllamav3 source at commit c5d9c65 (the commit the launcher's Dockerfile pins)
+  cd7555a8cc6a05cfb4c276d84d986173c78efbe0b8e76759604ca7aa2912a5e2  artifacts/thin_decode/build.sh
+  3affe4741f2bc9e0caff95ba9302a3b7c29a9dcaf59bf4e1e0372f9eeaef7ef2  artifacts/thin_decode/build.log
+      the build recipe and its log: inside ghcr.io/miaai-lab/glm-5.3-flash-2x-dgx-sparks:exl3-instanttensor, apply
+      patch_exl3_ext_aarch64.py, patch_exl3_fat_kernel.py (+ the exl3-fat-kernel sources) and
+      patch_exl3_decode_pipeline.py to the c5d9c65 tree, pip install, assert glm53_fast_moe_version() == 1
+  88294d19df4bd9bc4d4955f72ff292dcfcc596e3e1d0e1c90bebbb871f2abbbd  artifacts/launcher-0924-tree.tar.gz
+      the 2026-09-24 snapshot of the launcher repository MiaAI-Lab/GLM-5.3-Flash-EXL3-2x-DGX-Sparks used by
+      tests/drafter/chain_launcher_overlays.sh (tar -xzf, then pass <dir>/tree; its overlay/exl3.py is byte-identical to docs/ref/prod_live/overlay_exl3.py)
+
+Patch scripts (committed; same bytes as in the build and in the 09-24 snapshot):
+  b027f9485c246957708dbef8492529f7de764c29e562dc09017856da100b4d56  docs/ref/launcher_0924/patch_exl3_ext_aarch64.py
+  c24d29259e95bdf1620d33e86b5494b950705a8bea0984bff0369a642143a038  docs/ref/mia_patch_exl3_fat_kernel.py
+      (its sources: docs/ref/mia_exl3-fat-kernel/, identical to the build's overlay/exl3-fat-kernel/)
+  9bb4ed4b223b772cbdd2c26508f1287226ad43203a7302eed25263ddc8969018  docs/ref/launcher_0924/patch_exl3_decode_pipeline.py
+      adds glm53_exl3_moe_fast_kernel<4, 256, shared_input> and the host dispatch (K == 4, N_off == 1, SM 12.1,
+      GLM53_EXL3_MOE_FAST read once by getenv); shared_input = the gate/up suh pointer tables are one allocation
+  ada9cdd910e96736b43050a5034f7fd47e6e07dadbbe9adbe6113b9a308c198b  docs/ref/launcher_0924/patch_dense_fp8.py
+      the overlay-chain step that writes /opt/glm53/exl3.py over vLLM's quantization/exl3.py (09-24 version; the
+      df864b5 version in production has not been read)
+
+Not reproducible from here: whether nodeA/nodeB's exllamav3_ext.thin.so is this build (docs/PRODUCTION_PLAN.md Phase 0
+item 3 compares the sha256), and which env file the 09-24 chain check (docs/logs/prod_live/chain_launcher_overlays.log)
+used (the script now records the env file's path, sha256 and variable names in the log; that log predates it).

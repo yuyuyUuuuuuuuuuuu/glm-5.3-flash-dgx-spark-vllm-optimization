@@ -1,0 +1,22 @@
+--- a/vllm/platforms/cuda.py
++++ b/vllm/platforms/cuda.py
+@@ -128,8 +128,19 @@
+                 *sparse_backends,
+             ]
+         elif device_capability.major == 12:
++            # ★2026-09-04 パッチ: SM90 sparse-MLA を候補に戻す。
++            #   素の vLLM は sm_12x をここで打ち切り、下の else 節
++            #   「NoPE sparse MLA (GLM-5-Next shape) には SM90 FA3 経路を優先せよ」
++            #   に到達できない。結果 SM120 の fp8_ds_mla(packed)が選ばれ、
++            #   KV が 1トークンあたり約2.16倍になる(実測):
++            #     SM90  = HND layout      7,227 B/tok  (KV 8.5GiB で 1,262,883 tok)
++            #     SM120 = fp8_ds_mla     15,591 B/tok  (KV 14.52GiB が 1M に必要)
++            #   tonyd2wild の NVFP4 イメージは既に同じ1行を足しており、
++            #   そちらでは [SM90,SM120] の2候補から SM90 が選ばれている。
++            #   SM90 が feature gate で弾かれた場合は SM120 に落ちるだけなので安全。
+             return [
+                 AttentionBackendEnum.TRITON_MLA,
++                AttentionBackendEnum.FLASHINFER_MLA_SPARSE_SM90,
+                 AttentionBackendEnum.FLASHINFER_MLA_SPARSE_SM120,
+             ]
+         else:

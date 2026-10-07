@@ -1,0 +1,35 @@
+--- a/vllm/v1/attention/backends/mla/flashinfer_mla_sparse_sm90.py
++++ b/vllm/v1/attention/backends/mla/flashinfer_mla_sparse_sm90.py
+@@ -121,7 +121,11 @@
+ 
+     @classmethod
+     def supports_compute_capability(cls, capability: DeviceCapability) -> bool:
+-        return capability.major == 9
++        # 2026-09-04 パッチ: sm_12x(GB10)を許可する。
++        #   cuda.py で候補に戻しても、ここが False だと
++        #   'compute capability not supported' で無効判定される(backend.py:381)。
++        #   NVFP4 イメージ(tonyd2wild)は同じ変更を入れており sm_121 で動作実績あり。
++        return capability.major in (9, 12)
+ 
+     @classmethod
+     def supports_combination(
+@@ -136,7 +140,7 @@
+         use_mm_prefix: bool,
+         device_capability: DeviceCapability,
+     ) -> str | None:
+-        if not has_flashinfer_sm90_nope_mla():
++        if kv_cache_dtype in ("fp8", "fp8_e4m3") and not has_flashinfer_sm90_nope_mla():
+             return (
+                 "FLASHINFER_MLA_SPARSE_SM90 requires FlashInfer with SM90 "
+                 "MLA support (ckv_scale_arr in "
+@@ -218,7 +222,9 @@
+             kv_indices=self.kv_indices,
+             kv_len_arr=self.kv_len_arr,
+             use_cuda_graph=True,
+-            backend="fa3",
++            # 2026-09-04 パッチ: FA3 は Hopper(sm_90)専用。
++            #   sm_12x では fa2 を使う(NVFP4 イメージと同じ)。
++            backend=("fa3" if torch.cuda.get_device_capability()[0] == 9 else "fa2"),
+         )
+ 
+     def plan(self, num_tokens: int, kv_lens: torch.Tensor) -> None:

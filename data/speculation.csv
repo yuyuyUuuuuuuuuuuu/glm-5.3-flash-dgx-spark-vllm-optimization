@@ -1,0 +1,33 @@
+date,experiment,setting,workload,tokps,ms_per_step,acceptance,conditions,status,source
+2026-09-02,first EXL3 deployment,DFlash2 k=7,mixed,47-52,,63.6% (position 0: 90%),"EXL3 TP=2, early bench (not bench_decode.py)",adopted,operator notes
+2026-09-12,single-stream by workload,DFlash2 k=7,JSON,47.6,137.8,79.3%,"idle, thinking off",info,operator notes
+2026-09-12,single-stream by workload,DFlash2 k=7,code,39.9,139.6,64.9%,"idle, thinking off",info,operator notes
+2026-09-12,single-stream by workload,DFlash2 k=7,prose,15.7,124.6,13.7%,"idle, thinking off",info,operator notes
+2026-09-13,k sweep,k=1,prose / JSON / code,18.7 / 23.6 / 22.5,83.4,,"idle TP=2 EXL3; DFlash2 block_size 8 caps k at 7",rejected,operator notes
+2026-09-13,k sweep,k=3,prose / JSON / code,20.3 / 37.2 / 34.4,99.0,prose 31-33%,same,rejected,operator notes
+2026-09-13,k sweep,k=5,prose / JSON / code,17.5 / 45.2 / 34.1,111.4,,same,rejected,operator notes
+2026-09-13,k sweep,k=7,prose / JSON / code,15.5 / 52.5 / 34.7,124.0,prose 12-15%,same,kept,operator notes
+2026-09-13,shared expert routing across spec positions,GLM53_SHARE_SPEC_ROUTING=1,prose / code,28.9 / 88.6 (from 16.6 / 35.1),,,"quality collapse: 12-question set 7/8 -> 5/8, JSON instructions ignored",rejected,operator notes
+2026-09-13,MTP instead of DFlash2,SPEC_METHOD=mtp k=3,prose / JSON,17.3-18.3 / 34,,,same day as k sweep,rejected,operator notes
+2026-09-13,FP8 DFlash2 draft (self-made MLP-only),fp8 MLP draft,prose / JSON,7.2 / 7.1 (bf16 16.5 / 50.1),,,acceptance collapsed,rejected,operator notes
+2026-09-22,adaptive K,ADAPTIVE_K=ema SET=4;5;7,prose / structured / coding,31.16 / 70.46 / 42.90,,"accepted/step 2.02 / 6.71 / 2.98","bench_decode.py n=10 T=0 TTFT excluded, permutation test; sum 144.52",adopted,operator notes
+2026-09-22,adaptive K,SET=4;7,prose / structured / coding,27.36 / 71.66 / 38.77,,,same; sum 137.79,rejected,operator notes
+2026-09-22,adaptive K,SET=3;4;7,prose / structured / coding,29.96 / 70.71 / 37.72,,,same; sum 138.39,rejected,operator notes
+2026-09-22,adaptive K,SET=4;5;6;7,sum,-1.7% vs 4;5;7,,,same,rejected,operator notes
+2026-09-22,fixed K,K=2,prose / structured / coding,25.06 / 35.10 / 31.76,55 (bookkeeping of that day),,same; sum 91.92,rejected,operator notes
+2026-09-22,fixed K,K=4,prose / structured / coding,31.10 / 54.06 / 38.90,71,,same; sum 124.06,rejected,operator notes
+2026-09-22,fixed K,K=7,prose / structured / coding,23.91 / 69.84 / 43.28,95,,same; sum 137.03,rejected,operator notes
+2026-09-22,no speculation,spec off,prose / structured / coding,17.87 / 18.04 / 18.24,,,same; sum 54.15,reference,operator notes
+2026-09-22,third-party drafter,TR3-v3 retrained DFlash2,prose / structured,-6.1% / -5.7%,,,"at K=2 structured 71.66 -> 29.18; its +68% claim was TP=4, K=2, temp 0, baseline accept 1.07",rejected,operator notes
+2026-09-18,third-party A/B (same hardware),incoai DFlash2 vs dflash2E,c16 aggregate / c1,72.98 vs 70.87 / 28.97 vs 28.12,,accepted 3.6274 vs 3.5788,"canada-quant data, TP=2, K=7, 500 requests",kept incumbent,public third-party report
+2026-09-29,block verification,GLM53_REJECTION_METHOD=block,prose,40.9 -> 42.2,unchanged,3.06 -> 3.18 (+4.3% +-4.8),"temperature 1.0, top_p 0.95, rep penalty 1.05, same 16 seeds",adopted,bs/A1_standard.json + B1_block.json (node A)
+2026-09-29,block verification,GLM53_REJECTION_METHOD=block,coding / structured,+1.4% +-7.3 / +-0,unchanged,,same,adopted,same
+2026-09-29,DSpark preview drafter,RedHatAI dspark-preview vs DFlash2+block,prose,30.5 vs 42.2,94.8 vs 74.9,2.89 vs 3.18,"T=1.0, same 16 seeds",rejected,operator notes
+2026-09-29,DSpark preview drafter,same,coding,42.1 vs 55.9,97.0 vs 83.1,4.05 vs 4.67,same,rejected,operator notes
+2026-09-29,DSpark preview drafter,same,structured,69.2 vs 89.8,91.2 vs 83.1,6.32 vs 7.47,same,rejected,operator notes
+2026-09-30,DSpark tuned (fp8 drafter KV + adaptive K),T=0 bench,structured / prose / coding,79.57 / 35.82 / 46.49,87.85 / 76.44 / 83.10,6.12 / 1.75 / 2.91,bench_decode.py n=10 T=0,rejected,bench/dspark-fp8-ak_*.json
+2026-09-30,drafter precision,bf16 drafter (FP8 removed),prose,42.3 -> 39.9,74.7 -> 78.2,3.17 -> 3.11,"T=1.0, same 16 seeds",rejected (FP8 kept),operator notes
+2026-09-30,drafter precision,bf16 drafter,coding / structured acceptance,,,4.61 -> 4.66 / 7.53 -> 7.45,same,rejected (FP8 kept),operator notes
+2026-10-05,verify trimming,GLM53_SPEC_VTRIM=on TAU=0.3,ja,,66.8 -> 62.3,,"4-workload A/B, first three ON rounds contaminated by user traffic",adopted,env-ab/z8pvt/run.log
+2026-10-05,verify trimming,GLM53_SPEC_VTRIM=on TAU=0.3,prose / coding / structured,,70.7 -> 67.5 / ~0 / unchanged,,same,adopted,env-ab/z8pvt/run.log
+2026-10-05,verify trimming (offline replay),oracle ceiling,prose / coding / ja / structured,+19% / +13% / +24% / 0,,,exact replay of production acceptance traces,info,SPEC_VTRIM.md

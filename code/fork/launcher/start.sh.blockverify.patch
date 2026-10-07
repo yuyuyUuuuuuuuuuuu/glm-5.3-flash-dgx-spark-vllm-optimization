@@ -1,0 +1,84 @@
+--- a/start.sh
++++ b/start.sh
+@@ -259,6 +259,10 @@
+ # [tf-exl3-fork r16] every R16 bundle knob (quickwins, MLA prefill, DEC_FP8ROOF, DEC_MOEGLUE, DEC_HOSTLOOP,
+ #   DEC_SMALLOPS, KPOOL_RING) is forwarded to BOTH ranks: head `-e` lines after GLM53_KPOOL_SEED_STRIDE, worker
+ #   serve_env_names loop. Unset knobs arrive as "" = the module default (deploy-r16 tests/r16/test_r16_plugins.py P4).
++# [blockverify] GLM53_REJECTION_METHOD=standard|block (unset/empty = standard) -> rejection_sample_method of the
++#   DFlash2 --speculative-config in BOTH inner scripts; forwarded to both ranks (head -e after
++#   GLM53_SPEC_RESAMPLE_INDEPENDENT, worker serve_env_names). block also runs the bundle overlay
++#   patch_spec_block_keys.py (patch_tf_bundle.py) on both ranks. docs/BLOCK_VERIFY.md of tf-exl3-fork.
+ # [tf-exl3-fork] bundle: TensorFold EXL3 MoE kernels + resample-noise fix + drafter FP8 (inert unless its knobs are set)
+ TF_BUNDLE_PATCH_HOST="${TF_BUNDLE_PATCH_HOST:-$SCRIPT_DIR/overlay/patch_tf_bundle.py}"
+ TF_BUNDLE_DIR_HOST="${TF_BUNDLE_DIR_HOST:-$SCRIPT_DIR/overlay/tf}"
+@@ -730,6 +734,32 @@
+         _glm53_validate_enum GLM53_DEFAULT_REASONING_EFFORT \
+             "$GLM53_DEFAULT_REASONING_EFFORT" low high max || return
+     fi
++    # [blockverify] rejection sampling of the DFlash2 --speculative-config, on both ranks (docs/BLOCK_VERIFY.md).
++    # Unset/empty = standard (today). block is exact only with the resample-noise fix and the row-keyed DFlash2
++    # drafter/verifier (overlay/tf/overlay/patch_spec_block_keys.py, run by patch_tf_bundle.py).
++    if [ -n "${GLM53_REJECTION_METHOD:-}" ]; then
++        _glm53_validate_enum GLM53_REJECTION_METHOD "$GLM53_REJECTION_METHOD" standard block || return
++    fi
++    if [ "${GLM53_REJECTION_METHOD:-}" = "block" ]; then
++        if [ "$SPEC_METHOD" != "dflash" ]; then
++            echo "GLM53_REJECTION_METHOD=block requires SPEC_METHOD=dflash (got: $SPEC_METHOD)" >&2
++            return 2
++        fi
++        if [ "${GLM53_SPEC_RESAMPLE_INDEPENDENT:-}" != "1" ]; then
++            echo "GLM53_REJECTION_METHOD=block requires GLM53_SPEC_RESAMPLE_INDEPENDENT=1 (got: ${GLM53_SPEC_RESAMPLE_INDEPENDENT:-unset})" >&2
++            return 2
++        fi
++        if [ ! -s "$TF_BUNDLE_DIR_HOST/overlay/patch_spec_block_keys.py" ]; then
++            echo "GLM53_REJECTION_METHOD=block requires $TF_BUNDLE_DIR_HOST/overlay/patch_spec_block_keys.py" >&2
++            return 2
++        fi
++        # a pre-blockverify patch_tf_bundle.py never runs the overlay: the ranks would verify with stock block mode,
++        # which is biased across steps (docs/BLOCK_VERIFY.md section 0)
++        if ! grep -qF '("patch_spec_block_keys.py", "GLM53_REJECTION_METHOD")' "$TF_BUNDLE_PATCH_HOST" 2>/dev/null; then
++            echo "GLM53_REJECTION_METHOD=block requires $TF_BUNDLE_PATCH_HOST to run patch_spec_block_keys.py (the blockverify patch_tf_bundle.py)" >&2
++            return 2
++        fi
++    fi
+     _glm53_validate_mixed_prefill || return
+     _glm53_validate_retention_interval GLM53_APC_RETENTION_INTERVAL "${GLM53_APC_RETENTION_INTERVAL-}" || return
+     _glm53_validate_retention_interval GLM53_APC_RETENTION_INTERVAL_SWA "${GLM53_APC_RETENTION_INTERVAL_SWA-}" || return
+@@ -1813,7 +1843,9 @@
+ fi
+ if [ "${SPEC_METHOD:-mtp}" = "dflash" ]; then
+     ARGS+=(--speculative-config "$(python3 -S -c 'import json,os
+-spec={"method":"dflash","model":os.environ["DFLASH_MODEL_DIR"],"num_speculative_tokens":int(os.environ.get("DFLASH_TOKENS","7")),"kv_cache_dtype":(os.environ.get("DFLASH_KV_DTYPE") or "auto"),"draft_sample_method":"probabilistic","rejection_sample_method":"standard"}
++spec={"method":"dflash","model":os.environ["DFLASH_MODEL_DIR"],"num_speculative_tokens":int(os.environ.get("DFLASH_TOKENS","7")),"kv_cache_dtype":(os.environ.get("DFLASH_KV_DTYPE") or "auto"),"draft_sample_method":"probabilistic","rejection_sample_method":(os.environ.get("GLM53_REJECTION_METHOD") or "standard").strip()}
++if spec["rejection_sample_method"] not in ("standard","block"):
++    raise SystemExit("GLM53_REJECTION_METHOD must be standard or block (got: %r)" % os.environ.get("GLM53_REJECTION_METHOD"))
+ tp=os.environ.get("DFLASH_DRAFT_TP","").strip()
+ if tp:
+     spec["draft_tensor_parallel_size"]=int(tp)
+@@ -1893,7 +1925,9 @@
+ fi
+ if [ "${SPEC_METHOD:-mtp}" = "dflash" ]; then
+     ARGS+=(--speculative-config "$(python3 -S -c 'import json,os
+-spec={"method":"dflash","model":os.environ["DFLASH_MODEL_DIR"],"num_speculative_tokens":int(os.environ.get("DFLASH_TOKENS","7")),"kv_cache_dtype":(os.environ.get("DFLASH_KV_DTYPE") or "auto"),"draft_sample_method":"probabilistic","rejection_sample_method":"standard"}
++spec={"method":"dflash","model":os.environ["DFLASH_MODEL_DIR"],"num_speculative_tokens":int(os.environ.get("DFLASH_TOKENS","7")),"kv_cache_dtype":(os.environ.get("DFLASH_KV_DTYPE") or "auto"),"draft_sample_method":"probabilistic","rejection_sample_method":(os.environ.get("GLM53_REJECTION_METHOD") or "standard").strip()}
++if spec["rejection_sample_method"] not in ("standard","block"):
++    raise SystemExit("GLM53_REJECTION_METHOD must be standard or block (got: %r)" % os.environ.get("GLM53_REJECTION_METHOD"))
+ tp=os.environ.get("DFLASH_DRAFT_TP","").strip()
+ if tp:
+     spec["draft_tensor_parallel_size"]=int(tp)
+@@ -2196,6 +2230,7 @@
+              GLM53_EXL3_MOE_FAST GLM53_KDA_BF16_LARGE_M \
+              GLM53_COOP_GEOMETRY \
+              TF_EXL3_MOE TF_EXL3_TOKENS GLM53_SPEC_RESAMPLE_INDEPENDENT GLM53_DRAFT_FP8 GLM53_DRAFT_LMHEAD_FP8 \
++             GLM53_REJECTION_METHOD \
+              GLM53_MEM_HYGIENE GLM53_TF_PROFILE GLM53_TF_PROFILE_STEPS GLM53_LMHEAD_FP8 \
+              GLM53_FP8_GEMV GLM53_FP8_GEMV_MAX_M GLM53_BF16_GEMV GLM53_BF16_GEMV_KINDS GLM53_BF16_GEMV_DEDUP_ROUTER \
+              NCCL_TUNER_PLUGIN NCCL_TUNER_CONFIG_FILE GLM53_PREFILL_FUSED_CAP GLM53_FP8_LARGE_M GLM53_KPOOL_SEED_STRIDE \
+@@ -2402,6 +2437,7 @@
+         -e TF_EXL3_MOE="${TF_EXL3_MOE:-}" \
+         -e TF_EXL3_TOKENS="${TF_EXL3_TOKENS:-}" \
+         -e GLM53_SPEC_RESAMPLE_INDEPENDENT="${GLM53_SPEC_RESAMPLE_INDEPENDENT:-}" \
++        -e GLM53_REJECTION_METHOD="${GLM53_REJECTION_METHOD:-}" \
+         -e GLM53_DRAFT_FP8="${GLM53_DRAFT_FP8:-}" \
+         -e GLM53_DRAFT_LMHEAD_FP8="${GLM53_DRAFT_LMHEAD_FP8:-}" \
+         -e GLM53_MEM_HYGIENE="${GLM53_MEM_HYGIENE:-}" \

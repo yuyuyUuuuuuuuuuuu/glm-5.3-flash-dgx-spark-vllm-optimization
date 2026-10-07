@@ -1,0 +1,288 @@
+[env-ab 15:22:06] ablit: production runs ABLIT=1 on both ranks; every restart of this A/B passes ABLIT=1 (start.sh honours only a caller-exported ABLIT)
+[env-ab 15:22:06] no PREV_KIT_NAME: production must already run tf-exl3-deploy16.r16z8p; only .env is flipped
+kit-installed-ok
+backups-ok
+[env-ab 15:22:10] every arm accepted by the installed start.sh (base on b2 on2)
+[env-ab 15:22:10] === arm base
+env-now: base = the pre-A/B .env
+[1;36m[glm53-exl3][0m   manage     : ./start.sh status | ./start.sh logs | ./start.sh logs worker | ./start.sh stop
+[1;36m[glm53-exl3][0m ======================================================================
+[envab-base-20261005-152205 15:28:59] start returned
+ok   [head=worker] container env GLM53_SPEC_VTRIM=<unset>
+ok   [head=worker] container env GLM53_SPEC_VTRIM_TAU=<unset>
+ok   [head=worker] container env GLM53_SPEC_VTRIM_MIN=<unset>
+ok   [head=worker] container env GLM53_SPEC_VTRIM_LOG=<unset>
+turn1: prompt 39035 cached 0 e2e 14.2s hits+0 queries+39035
+repeat: prompt 39035 cached 36864 e2e 2.5s hits+36864 queries+39035
+turn2: prompt 39048 cached 36864 e2e 2.3s hits+36864 queries+39048
+== APC 97k repeat (fresh 591 case)
+[envab-base-20261005-152205-apc97k] cold: prompt 97359 cached 0 completion 64 ttft 34.21s decode 1.37s steps 18 -> 76.2 ms/step, 3.22 tok/step, 46.7 tok/s
+[envab-base-20261005-152205-apc97k] warm: prompt 97359 cached 96768 completion 64 ttft 0.79s decode 1.18s steps 16 -> 73.8 ms/step, 4.12 tok/step, 54.2 tok/s
+== kpool decode-vs-prefill
+text 0: prompt 6842 tokens, generated 1536
+text 1: prompt 5202 tokens, generated 1536
+text 2: prompt 8350 tokens, generated 1536
+${HOME}/tf-exl3-deploy/kpool-after-envab-base-20261005-152205.json (2026-10-05 15:37:20): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01210  top-1 agree 97.66%
+  gen pos [128, 512): n=1152  KL mean 0.01569  top-1 agree 97.92%
+  gen pos [512, 1024): n=1536  KL mean 0.02456  top-1 agree 96.42%
+  gen pos [1024, 1536): n=1536  KL mean 0.01492  top-1 agree 97.66%
+  all: n=4608  KL mean 0.01809  top-1 agree 97.31%
+${HOME}/tf-exl3-deploy/kpool-before-r15.json (2026-09-28 19:05:13): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.00646  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.00654  top-1 agree 98.18%
+  gen pos [512, 1024): n=1536  KL mean 0.00622  top-1 agree 98.37%
+  gen pos [1024, 1536): n=1536  KL mean 0.00602  top-1 agree 98.76%
+  all: n=4608  KL mean 0.00625  top-1 agree 98.48%
+${HOME}/tf-exl3-deploy/kpool-after-envab-base-20261005-152205.json (2026-10-05 15:37:20): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01210  top-1 agree 97.66%
+  gen pos [128, 512): n=1152  KL mean 0.01569  top-1 agree 97.92%
+  gen pos [512, 1024): n=1536  KL mean 0.02456  top-1 agree 96.42%
+  gen pos [1024, 1536): n=1536  KL mean 0.01492  top-1 agree 97.66%
+  all: n=4608  KL mean 0.01809  top-1 agree 97.31%
+KL mean before 0.00625 -> after 0.01809 (+189.3%)
+== quality long vs R15
+text 2: 15954 positions
+long-context (positions >= 4608, n=28275): KL mean 0.0578 p95 0.2349 max 8.543 | top-1 agree 97.18%
+== quality short vs R15
+wrote Q_envab-base-20261005-152205.json: 20 decode, 6 prefill texts
+decode: identical 1/20; first divergence token idx median 14 min 0; |dlogprob| on shared prefix mean 4.49e-02 max 8.03e-01 (n=632)
+prefill KL(A||B) nats/token over top-20 union: mean 0.0630 p95 0.2454 max 11.8164 (n=962)
+== klh
+KLH envab-base-20261005-152205 nll=0.50369 top1=0.8776 aa=0.01263 dvptf=0.01108 dvptf_se=0.00138 n_pf=415620 n_dec=1908
+KLH-CMP envab-base-20261005-152205 pfkl=0.01363 nll=0.50369 dvptf=0.01108 long5=0.05889 long5_top1=97.10
+== [envab-base-20261005-152205] done 2026-10-05 15:49:25 mem nodeA: avail 4G swap 4943M
+before 32000: running=0.0 waiting=0.0
+      32111    10.54         3046        36.6       32        153  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31957    10.47         3054        48.0       32        160  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31775    10.42         3050        31.6       32        127  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31361    10.27         3054        40.3       32        155  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      32350    10.65         3039        39.6       32        149  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31516    10.24         3078        31.2       32        145  length
+after 32000: running=0.0 waiting=0.0
+[env-ab 15:50:46] RESULT base: gate32k-median=3052 (n=6) long=0.0578 top1=97.18 dvp=0.01809 decode-structured=100.24
+[env-ab 15:50:46] === arm on
+env-now: GLM53_SPEC_VTRIM= GLM53_SPEC_VTRIM_LOG= GLM53_SPEC_VTRIM_TAU=
+[1;36m[glm53-exl3][0m   manage     : ./start.sh status | ./start.sh logs | ./start.sh logs worker | ./start.sh stop
+[1;36m[glm53-exl3][0m ======================================================================
+[envab-on-20261005-152205 15:57:41] start returned
+ok   [head=worker] container env GLM53_SPEC_VTRIM=on
+ok   [head=worker] container env GLM53_SPEC_VTRIM_TAU=0.3
+ok   [head=worker] container env GLM53_SPEC_VTRIM_MIN=<unset>
+ok   [head=worker] container env GLM53_SPEC_VTRIM_LOG=200
+turn2: prompt 39049 cached 36864 e2e 2.8s hits+36864 queries+39049
+== APC 97k repeat (fresh 591 case)
+[envab-on-20261005-152205-apc97k] cold: prompt 97359 cached 0 completion 64 ttft 31.91s decode 1.16s steps 16 -> 72.4 ms/step, 3.62 tok/step, 55.3 tok/s
+[envab-on-20261005-152205-apc97k] warm: prompt 97359 cached 96768 completion 64 ttft 0.77s decode 1.10s steps 15 -> 73.5 ms/step, 4.53 tok/step, 58.1 tok/s
+== kpool decode-vs-prefill
+text 0: prompt 6842 tokens, generated 1536
+text 1: prompt 5202 tokens, generated 1536
+text 2: prompt 8350 tokens, generated 1536
+${HOME}/tf-exl3-deploy/kpool-after-envab-on-20261005-152205.json (2026-10-05 16:06:02): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01320  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.02007  top-1 agree 96.96%
+  gen pos [512, 1024): n=1536  KL mean 0.01881  top-1 agree 97.33%
+  gen pos [1024, 1536): n=1536  KL mean 0.01889  top-1 agree 97.14%
+  all: n=4608  KL mean 0.01868  top-1 agree 97.29%
+${HOME}/tf-exl3-deploy/kpool-before-r15.json (2026-09-28 19:05:13): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.00646  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.00654  top-1 agree 98.18%
+  gen pos [512, 1024): n=1536  KL mean 0.00622  top-1 agree 98.37%
+  gen pos [1024, 1536): n=1536  KL mean 0.00602  top-1 agree 98.76%
+  all: n=4608  KL mean 0.00625  top-1 agree 98.48%
+${HOME}/tf-exl3-deploy/kpool-after-envab-on-20261005-152205.json (2026-10-05 16:06:02): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01320  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.02007  top-1 agree 96.96%
+  gen pos [512, 1024): n=1536  KL mean 0.01881  top-1 agree 97.33%
+  gen pos [1024, 1536): n=1536  KL mean 0.01889  top-1 agree 97.14%
+  all: n=4608  KL mean 0.01868  top-1 agree 97.29%
+KL mean before 0.00625 -> after 0.01868 (+198.7%)
+== quality long vs R15
+text 2: 15954 positions
+long-context (positions >= 4608, n=28275): KL mean 0.0590 p95 0.2395 max 11.952 | top-1 agree 97.15%
+== quality short vs R15
+wrote Q_envab-on-20261005-152205.json: 20 decode, 6 prefill texts
+decode: identical 1/20; first divergence token idx median 14 min 0; |dlogprob| on shared prefix mean 4.58e-02 max 7.68e-01 (n=480)
+prefill KL(A||B) nats/token over top-20 union: mean 0.0636 p95 0.2355 max 11.9858 (n=962)
+== klh
+KLH envab-on-20261005-152205 nll=0.50363 top1=0.8776 aa=0.01317 dvptf=0.01119 dvptf_se=0.00128 n_pf=415620 n_dec=1911
+KLH-CMP envab-base-20261005-152205 pfkl=0.01363 nll=0.50369 dvptf=0.01108 long5=0.05889 long5_top1=97.10
+KLH-CMP envab-on-20261005-152205 pfkl=0.01376 nll=0.50363 dvptf=0.01119 long5=0.05757 long5_top1=97.12 d_kl=+0.00013 d_kl_lo=-0.00006 d_kl_hi=+0.00031 d_nll=-0.00005 d_nll_lo=-0.00062 d_nll_hi=+0.00058 d_dvp=+0.00011 d_dvp_lo=-0.00102 d_dvp_hi=+0.00130
+KLH-GATE envab-on-20261005-152205 d_pfkl=+0.00017 lo=-0.00003 hi=+0.00037 se=0.00012 df=44 d_dvp=+0.00011 dvp_lo=-0.00102 dvp_hi=+0.00130
+== [envab-on-20261005-152205] done 2026-10-05 16:17:59 mem nodeA: avail 3G swap 2346M
+before 32000: running=0.0 waiting=0.0
+      32111    10.60         3030        37.2       32        154  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31957    11.24         2843        53.3       32        160  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31775    10.55         3012        37.2       32        127  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31361    10.41         3013        44.9       32        156  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      32350    10.71         3020        40.3       32        132  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31516    10.22         3084        37.5       32        154  length
+after 32000: running=0.0 waiting=0.0
+[env-ab 16:19:24] RESULT on: gate32k-median=3016.5 (n=6) long=0.0590 top1=97.15 dvp=0.01868 decode-structured=99.69
+[env-ab 16:19:24] === arm b2
+env-now: GLM53_SPEC_VTRIM=
+[1;36m[glm53-exl3][0m   manage     : ./start.sh status | ./start.sh logs | ./start.sh logs worker | ./start.sh stop
+[1;36m[glm53-exl3][0m ======================================================================
+[envab-b2-20261005-152205 16:26:16] start returned
+ok   [head=worker] container env GLM53_SPEC_VTRIM=off
+ok   [head=worker] container env GLM53_SPEC_VTRIM_TAU=<unset>
+ok   [head=worker] container env GLM53_SPEC_VTRIM_MIN=<unset>
+ok   [head=worker] container env GLM53_SPEC_VTRIM_LOG=<unset>
+== APC 97k repeat (fresh 591 case)
+[envab-b2-20261005-152205-apc97k] busy (running=1.0 waiting=0.0), abort
+== kpool decode-vs-prefill
+server busy (running=1 waiting=0); retry when idle or pass --force
+kpool: busy, retry 1
+text 0: prompt 6842 tokens, generated 1536
+text 1: prompt 5202 tokens, generated 1536
+text 2: prompt 8350 tokens, generated 1536
+${HOME}/tf-exl3-deploy/kpool-after-envab-b2-20261005-152205.json (2026-10-05 16:34:28): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01628  top-1 agree 96.88%
+  gen pos [128, 512): n=1152  KL mean 0.01495  top-1 agree 97.74%
+  gen pos [512, 1024): n=1536  KL mean 0.01902  top-1 agree 97.14%
+  gen pos [1024, 1536): n=1536  KL mean 0.01878  top-1 agree 97.72%
+  all: n=4608  KL mean 0.01769  top-1 agree 97.46%
+${HOME}/tf-exl3-deploy/kpool-before-r15.json (2026-09-28 19:05:13): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.00646  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.00654  top-1 agree 98.18%
+  gen pos [512, 1024): n=1536  KL mean 0.00622  top-1 agree 98.37%
+  gen pos [1024, 1536): n=1536  KL mean 0.00602  top-1 agree 98.76%
+  all: n=4608  KL mean 0.00625  top-1 agree 98.48%
+${HOME}/tf-exl3-deploy/kpool-after-envab-b2-20261005-152205.json (2026-10-05 16:34:28): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01628  top-1 agree 96.88%
+  gen pos [128, 512): n=1152  KL mean 0.01495  top-1 agree 97.74%
+  gen pos [512, 1024): n=1536  KL mean 0.01902  top-1 agree 97.14%
+  gen pos [1024, 1536): n=1536  KL mean 0.01878  top-1 agree 97.72%
+  all: n=4608  KL mean 0.01769  top-1 agree 97.46%
+KL mean before 0.00625 -> after 0.01769 (+182.9%)
+== quality long vs R15
+text 2: 15954 positions
+long-context (positions >= 4608, n=28275): KL mean 0.0590 p95 0.2427 max 11.386 | top-1 agree 97.12%
+== quality short vs R15
+wrote Q_envab-b2-20261005-152205.json: 20 decode, 6 prefill texts
+decode: identical 1/20; first divergence token idx median 14 min 0; |dlogprob| on shared prefix mean 4.26e-02 max 9.08e-01 (n=493)
+prefill KL(A||B) nats/token over top-20 union: mean 0.0642 p95 0.2448 max 11.8164 (n=962)
+== klh
+KLH envab-b2-20261005-152205 nll=0.50382 top1=0.8774 aa=0.01305 dvptf=0.01204 dvptf_se=0.00181 n_pf=415620 n_dec=1915
+KLH-CMP envab-base-20261005-152205 pfkl=0.01363 nll=0.50369 dvptf=0.01108 long5=0.05889 long5_top1=97.10
+KLH-CMP envab-b2-20261005-152205 pfkl=0.01382 nll=0.50382 dvptf=0.01204 long5=0.05858 long5_top1=97.14 d_kl=+0.00019 d_kl_lo=+0.00002 d_kl_hi=+0.00036 d_nll=+0.00014 d_nll_lo=-0.00053 d_nll_hi=+0.00093 d_dvp=+0.00036 d_dvp_lo=-0.00134 d_dvp_hi=+0.00213
+KLH-GATE envab-b2-20261005-152205 d_pfkl=+0.00021 lo=+0.00003 hi=+0.00039 se=0.00011 df=44 d_dvp=+0.00036 dvp_lo=-0.00134 dvp_hi=+0.00213
+== [envab-b2-20261005-152205] done 2026-10-05 16:46:29 mem nodeA: avail 4G swap 3806M
+before 32000: running=0.0 waiting=0.0
+      32111    11.16         2878        34.2       32        154  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31957    10.52         3037        32.0       32        133  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31775    10.45         3041        34.2       32        127  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31361    10.38         3021        43.9       32        141  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      32350    10.69         3025        34.6       32        132  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31516    10.26         3071        37.0       32        154  length
+after 32000: running=0.0 waiting=0.0
+[env-ab 16:47:55] RESULT b2: gate32k-median=3031 (n=6) long=0.0590 top1=97.12 dvp=0.01769 decode-structured=99.36
+[env-ab 16:47:55] === arm on2
+env-now: GLM53_SPEC_VTRIM= GLM53_SPEC_VTRIM_LOG= GLM53_SPEC_VTRIM_TAU=
+[1;36m[glm53-exl3][0m   manage     : ./start.sh status | ./start.sh logs | ./start.sh logs worker | ./start.sh stop
+[1;36m[glm53-exl3][0m ======================================================================
+[envab-on2-20261005-152205 16:54:46] start returned
+ok   [head=worker] container env GLM53_SPEC_VTRIM=on
+ok   [head=worker] container env GLM53_SPEC_VTRIM_TAU=0.3
+ok   [head=worker] container env GLM53_SPEC_VTRIM_MIN=<unset>
+ok   [head=worker] container env GLM53_SPEC_VTRIM_LOG=200
+turn2: prompt 39047 cached 36864 e2e 2.3s hits+36864 queries+39047
+== APC 97k repeat (fresh 591 case)
+[envab-on2-20261005-152205-apc97k] cold: prompt 97359 cached 0 completion 64 ttft 31.85s decode 1.12s steps 16 -> 69.9 ms/step, 4.12 tok/step, 57.2 tok/s
+[envab-on2-20261005-152205-apc97k] warm: prompt 97359 cached 96768 completion 64 ttft 0.73s decode 1.18s steps 17 -> 69.3 ms/step, 3.88 tok/step, 54.3 tok/s
+== kpool decode-vs-prefill
+text 0: prompt 6842 tokens, generated 1536
+text 1: prompt 5202 tokens, generated 1536
+text 2: prompt 8350 tokens, generated 1536
+${HOME}/tf-exl3-deploy/kpool-after-envab-on2-20261005-152205.json (2026-10-05 17:02:34): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01146  top-1 agree 98.18%
+  gen pos [128, 512): n=1152  KL mean 0.02108  top-1 agree 97.40%
+  gen pos [512, 1024): n=1536  KL mean 0.01021  top-1 agree 98.24%
+  gen pos [1024, 1536): n=1536  KL mean 0.01161  top-1 agree 98.05%
+  all: n=4608  KL mean 0.01350  top-1 agree 97.96%
+${HOME}/tf-exl3-deploy/kpool-before-r15.json (2026-09-28 19:05:13): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.00646  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.00654  top-1 agree 98.18%
+  gen pos [512, 1024): n=1536  KL mean 0.00622  top-1 agree 98.37%
+  gen pos [1024, 1536): n=1536  KL mean 0.00602  top-1 agree 98.76%
+  all: n=4608  KL mean 0.00625  top-1 agree 98.48%
+${HOME}/tf-exl3-deploy/kpool-after-envab-on2-20261005-152205.json (2026-10-05 17:02:34): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01146  top-1 agree 98.18%
+  gen pos [128, 512): n=1152  KL mean 0.02108  top-1 agree 97.40%
+  gen pos [512, 1024): n=1536  KL mean 0.01021  top-1 agree 98.24%
+  gen pos [1024, 1536): n=1536  KL mean 0.01161  top-1 agree 98.05%
+  all: n=4608  KL mean 0.01350  top-1 agree 97.96%
+KL mean before 0.00625 -> after 0.01350 (+115.9%)
+== quality long vs R15
+text 2: 15954 positions
+long-context (positions >= 4608, n=28275): KL mean 0.0590 p95 0.2490 max 12.347 | top-1 agree 97.05%
+== quality short vs R15
+wrote Q_envab-on2-20261005-152205.json: 20 decode, 6 prefill texts
+decode: identical 2/20; first divergence token idx median 27 min 1; |dlogprob| on shared prefix mean 4.56e-02 max 7.33e-01 (n=718)
+prefill KL(A||B) nats/token over top-20 union: mean 0.0653 p95 0.2748 max 11.9071 (n=962)
+== klh
+KLH envab-on2-20261005-152205 nll=0.50303 top1=0.8777 aa=0.01315 dvptf=0.01118 dvptf_se=0.00157 n_pf=415620 n_dec=1906
+KLH-CMP envab-base-20261005-152205 pfkl=0.01363 nll=0.50369 dvptf=0.01108 long5=0.05889 long5_top1=97.10
+KLH-CMP envab-on2-20261005-152205 pfkl=0.01369 nll=0.50303 dvptf=0.01118 long5=0.05817 long5_top1=97.16 d_kl=+0.00006 d_kl_lo=-0.00010 d_kl_hi=+0.00022 d_nll=-0.00066 d_nll_lo=-0.00114 d_nll_hi=-0.00021 d_dvp=+0.00017 d_dvp_lo=-0.00148 d_dvp_hi=+0.00174
+KLH-GATE envab-on2-20261005-152205 d_pfkl=+0.00009 lo=-0.00008 hi=+0.00025 se=0.00010 df=44 d_dvp=+0.00017 dvp_lo=-0.00148 dvp_hi=+0.00174
+== [envab-on2-20261005-152205] done 2026-10-05 17:14:16 mem nodeA: avail 3G swap 2237M
+before 32000: running=0.0 waiting=0.0
+      32111    10.51         3055        39.6       32        153  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31957    10.49         3046        41.0       32        133  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31775    10.45         3040        42.2       32        127  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31361    10.32         3038        40.0       32        153  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      32350    10.64         3040        38.0       32        154  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31516    10.27         3068        38.1       32        161  length
+after 32000: running=0.0 waiting=0.0
+[env-ab 17:15:41] RESULT on2: gate32k-median=3043 (n=6) long=0.0590 top1=97.05 dvp=0.01350 decode-structured=99.75
+[env-ab 17:15:41] judge on: gate 3016.5 long 0.0590 top1 97.15 dvp 0.01868 dec 99.69 -> 0
+[env-ab 17:15:41] judge b2: gate 3031 long 0.0590 top1 97.12 dvp 0.01769 dec 99.36 -> 0
+[env-ab 17:15:41] judge on2: gate 3043 long 0.0590 top1 97.05 dvp 0.01350 dec 99.75 -> 0
+[env-ab 17:15:41] KEEP=base: the best arm was base; production ends on base
+[env-ab 17:15:41] FINAL keep: base (running now: on2)
+env-now: base = the pre-A/B .env
+[1;36m[glm53-exl3][0m   manage     : ./start.sh status | ./start.sh logs | ./start.sh logs worker | ./start.sh stop
+[1;36m[glm53-exl3][0m ======================================================================
+[envab-final-base-20261005-152205-1 17:22:39] start returned
+[env-ab 17:23:04] done: runtime [GLM53_SPEC_VTRIM= GLM53_SPEC_VTRIM_LOG= GLM53_SPEC_VTRIM_TAU= | GLM53_SPEC_VTRIM= GLM53_SPEC_VTRIM_LOG= GLM53_SPEC_VTRIM_TAU= ] (expected arm base = [GLM53_SPEC_VTRIM= GLM53_SPEC_VTRIM_LOG= GLM53_SPEC_VTRIM_TAU= | GLM53_SPEC_VTRIM= GLM53_SPEC_VTRIM_LOG= GLM53_SPEC_VTRIM_TAU= ])
+exit 0

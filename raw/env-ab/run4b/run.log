@@ -1,0 +1,138 @@
+[env-ab 19:41:06] no PREV_KIT_NAME: production must already run tf-exl3-deploy16.r16z5rev; only .env is flipped
+kit-installed-ok
+backups-ok
+[env-ab 19:41:08] every arm accepted by the installed start.sh (base d)
+[env-ab 19:41:08] === arm base
+env-now: base = the pre-A/B .env
+[1;36m[glm53-exl3][0m   manage     : ./start.sh status | ./start.sh logs | ./start.sh logs worker | ./start.sh stop
+[1;36m[glm53-exl3][0m ======================================================================
+[envab-base-20261003-194105 19:47:58] start returned
+ok   [head=worker] container env GLM53_DENSE_W8A8_FP8AG <unset>
+== prefill random 24k
+[envab-base-20261003-194105] prefill ~24029 tok: 8.09s, 8.03s, 8.07s -> median 2976 tok/s
+== APC 40k (repeat + turn2)
+turn1: prompt 39036 cached 0 e2e 14.6s hits+0 queries+39036
+repeat: prompt 39036 cached 36864 e2e 2.6s hits+36864 queries+39036
+turn2: prompt 39049 cached 36864 e2e 2.4s hits+36864 queries+39049
+== APC 97k repeat (fresh 591 case)
+[envab-base-20261003-194105-apc97k] cold: prompt 97359 cached 0 completion 64 ttft 32.57s decode 1.19s steps 15 -> 79.6 ms/step, 3.87 tok/step, 53.6 tok/s
+[envab-base-20261003-194105-apc97k] warm: prompt 97359 cached 96768 completion 64 ttft 0.78s decode 1.17s steps 15 -> 78.3 ms/step, 4.40 tok/step, 54.5 tok/s
+== kpool decode-vs-prefill
+text 0: prompt 6842 tokens, generated 1536
+text 1: prompt 5202 tokens, generated 1536
+text 2: prompt 8350 tokens, generated 1536
+${HOME}/tf-exl3-deploy/kpool-after-envab-base-20261003-194105.json (2026-10-03 19:55:27): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.03116  top-1 agree 96.88%
+  gen pos [128, 512): n=1152  KL mean 0.01769  top-1 agree 97.05%
+  gen pos [512, 1024): n=1536  KL mean 0.02477  top-1 agree 96.55%
+  gen pos [1024, 1536): n=1536  KL mean 0.02123  top-1 agree 96.68%
+  all: n=4608  KL mean 0.02235  top-1 agree 96.74%
+${HOME}/tf-exl3-deploy/kpool-before-r15.json (2026-09-28 19:05:13): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.00646  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.00654  top-1 agree 98.18%
+  gen pos [512, 1024): n=1536  KL mean 0.00622  top-1 agree 98.37%
+  gen pos [1024, 1536): n=1536  KL mean 0.00602  top-1 agree 98.76%
+  all: n=4608  KL mean 0.00625  top-1 agree 98.48%
+${HOME}/tf-exl3-deploy/kpool-after-envab-base-20261003-194105.json (2026-10-03 19:55:27): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.03116  top-1 agree 96.88%
+  gen pos [128, 512): n=1152  KL mean 0.01769  top-1 agree 97.05%
+  gen pos [512, 1024): n=1536  KL mean 0.02477  top-1 agree 96.55%
+  gen pos [1024, 1536): n=1536  KL mean 0.02123  top-1 agree 96.68%
+  all: n=4608  KL mean 0.02235  top-1 agree 96.74%
+KL mean before 0.00625 -> after 0.02235 (+257.4%)
+== quality long vs R15
+text 2: 15954 positions
+long-context (positions >= 4608, n=28275): KL mean 0.0151 p95 0.0565 max 5.170 | top-1 agree 98.51%
+== quality short vs R15
+wrote Q_envab-base-20261003-194105.json: 20 decode, 6 prefill texts
+decode: identical 4/20; first divergence token idx median 36 min 0; |dlogprob| on shared prefix mean 2.07e-02 max 6.35e-01 (n=833)
+prefill KL(A||B) nats/token over top-20 union: mean 0.0200 p95 0.0729 max 2.5630 (n=962)
+== [envab-base-20261003-194105] done 2026-10-03 19:56:37 mem nodeA: avail 4G swap 2551M
+before 32000: running=0.0 waiting=0.0
+      32111    10.76         2985        32.2       32        159  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31957    10.73         2978        34.7       32        153  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31775    10.66         2980        49.3       32        160  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31361    10.51         2985        57.9       32        153  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      32350    10.87         2975        42.3       32        160  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31516    10.46         3013        46.9       32        160  length
+after 32000: running=0.0 waiting=0.0
+[env-ab 19:57:59] RESULT base: gate32k-median=2982.5 (n=6) long=0.0151 top1=98.51 dvp=0.02235 decode-structured=95.86
+[env-ab 19:57:59] === arm d
+env-now: GLM53_DENSE_W8A8_FP8AG=
+[1;36m[glm53-exl3][0m   manage     : ./start.sh status | ./start.sh logs | ./start.sh logs worker | ./start.sh stop
+[1;36m[glm53-exl3][0m ======================================================================
+[envab-d-20261003-194105 20:04:49] start returned
+ok   [head=worker] container env GLM53_DENSE_W8A8_FP8AG 1
+ok   [fp8ag-pair] GLM53_DENSE_W8A8_FP8AG=1: FP8 all-gather installed on BOTH ranks (head + worker)
+== prefill random 24k
+[envab-d-20261003-194105] prefill ~24031 tok: 7.87s, 7.90s, 7.91s -> median 3040 tok/s
+== APC 40k (repeat + turn2)
+turn1: prompt 39036 cached 0 e2e 14.1s hits+0 queries+39036
+repeat: prompt 39036 cached 36864 e2e 2.6s hits+36864 queries+39036
+turn2: prompt 39049 cached 36864 e2e 2.3s hits+36864 queries+39049
+== APC 97k repeat (fresh 591 case)
+[envab-d-20261003-194105-apc97k] cold: prompt 97359 cached 0 completion 64 ttft 31.92s decode 1.16s steps 14 -> 82.6 ms/step, 4.14 tok/step, 55.4 tok/s
+[envab-d-20261003-194105-apc97k] warm: prompt 97359 cached 96768 completion 64 ttft 0.76s decode 1.18s steps 15 -> 78.8 ms/step, 4.40 tok/step, 54.1 tok/s
+== kpool decode-vs-prefill
+text 0: prompt 6842 tokens, generated 1536
+text 1: prompt 5202 tokens, generated 1536
+text 2: prompt 8350 tokens, generated 1536
+${HOME}/tf-exl3-deploy/kpool-after-envab-d-20261003-194105.json (2026-10-03 20:12:19): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01078  top-1 agree 98.96%
+  gen pos [128, 512): n=1152  KL mean 0.01381  top-1 agree 98.00%
+  gen pos [512, 1024): n=1536  KL mean 0.02206  top-1 agree 96.81%
+  gen pos [1024, 1536): n=1536  KL mean 0.01723  top-1 agree 97.66%
+  all: n=4608  KL mean 0.01745  top-1 agree 97.57%
+${HOME}/tf-exl3-deploy/kpool-before-r15.json (2026-09-28 19:05:13): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.00646  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.00654  top-1 agree 98.18%
+  gen pos [512, 1024): n=1536  KL mean 0.00622  top-1 agree 98.37%
+  gen pos [1024, 1536): n=1536  KL mean 0.00602  top-1 agree 98.76%
+  all: n=4608  KL mean 0.00625  top-1 agree 98.48%
+${HOME}/tf-exl3-deploy/kpool-after-envab-d-20261003-194105.json (2026-10-03 20:12:19): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01078  top-1 agree 98.96%
+  gen pos [128, 512): n=1152  KL mean 0.01381  top-1 agree 98.00%
+  gen pos [512, 1024): n=1536  KL mean 0.02206  top-1 agree 96.81%
+  gen pos [1024, 1536): n=1536  KL mean 0.01723  top-1 agree 97.66%
+  all: n=4608  KL mean 0.01745  top-1 agree 97.57%
+KL mean before 0.00625 -> after 0.01745 (+179.0%)
+== quality long vs R15
+text 2: 15954 positions
+long-context (positions >= 4608, n=28275): KL mean 0.0142 p95 0.0519 max 2.891 | top-1 agree 98.56%
+== quality short vs R15
+wrote Q_envab-d-20261003-194105.json: 20 decode, 6 prefill texts
+decode: identical 3/20; first divergence token idx median 24 min 0; |dlogprob| on shared prefix mean 2.19e-02 max 6.89e-01 (n=723)
+prefill KL(A||B) nats/token over top-20 union: mean 0.0185 p95 0.0624 max 2.5628 (n=962)
+== [envab-d-20261003-194105] done 2026-10-03 20:13:28 mem nodeA: avail 3G swap 1660M
+before 32000: running=0.0 waiting=0.0
+      32111    10.53         3049        27.5       32        135  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31957    10.50         3043        49.2       32        160  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31775    10.39         3058        32.5       32        150  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31361    10.33         3037        40.6       32        153  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      32350    10.66         3034        47.5       32        160  length
+after 32000: running=0.0 waiting=0.0
+before 32000: running=0.0 waiting=0.0
+      31516    10.22         3084        45.8       32        160  length
+after 32000: running=0.0 waiting=0.0
+[env-ab 20:14:50] RESULT d: gate32k-median=3046 (n=6) long=0.0142 top1=98.56 dvp=0.01745 decode-structured=95.96
+[env-ab 20:14:50] judge d: gate 3046 long 0.0142 top1 98.56 dvp 0.01745 dec 95.96 -> 1
+[env-ab 20:14:50] FINAL keep: d (running now: d)
+[env-ab 20:14:50] done: runtime [GLM53_DENSE_W8A8_FP8AG=1 | GLM53_DENSE_W8A8_FP8AG=1 ] (expected arm d = [GLM53_DENSE_W8A8_FP8AG=1 | GLM53_DENSE_W8A8_FP8AG=1 ])

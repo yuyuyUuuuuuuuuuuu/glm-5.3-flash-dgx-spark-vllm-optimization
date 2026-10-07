@@ -1,0 +1,43 @@
+snapshot_date,config,step_ms,component,ms_per_step,share_or_note,conditions,source
+2026-09-13,pre-fork EXL3 k=7,124,exl3_moe_kernel<4;256> (routed MoE),57.2,46.1%,"torch profiler, C1 prose, 1428 calls, 1434 us/call",operator notes
+2026-09-13,pre-fork EXL3 k=7,124,cutlass_80 wmma bf16 GEMMs (two families),34.0 + 12.8,27.4% + 10.3%,same,operator notes
+2026-09-13,pre-fork EXL3 k=7,124,NCCL all-reduce,6.8,5.5%,same,operator notes
+2026-09-13,pre-fork EXL3 k=7,124,fused_recurrent_gated_delta_rule (KDA),,1.5%,same,operator notes
+2026-09-13,pre-fork EXL3 k=7,72.7-73.1,single verifier pass with speculation off,72.7-73.1,45 layers -> 1.62 ms/layer,same,operator notes
+2026-09-28,R7 (fork + FP8 groups),78,MoE layers (TF grouped kernel 33.6 ms),~42,bandwidth-bound,"rank 0, prose, GPU busy 96%",PRODUCTION_RESULT.md
+2026-09-28,R7,78,KDA layers (FP8 Marlin ~350 us/layer),~15,,same,PRODUCTION_RESULT.md
+2026-09-28,R7,78,MLA layers,~7,,same,PRODUCTION_RESULT.md
+2026-09-28,R7,78,lm_head (BF16; 1.38 ms after FP8),2.65,,same,PRODUCTION_RESULT.md
+2026-09-28,R7,78,drafter,~5.8,,same,PRODUCTION_RESULT.md
+2026-09-28,R7,78,sampling,~1.3,,same,PRODUCTION_RESULT.md
+2026-09-28,R7,78,NCCL all-reduce,~2.6,~25 us x 102 calls,same,PRODUCTION_RESULT.md
+2026-09-28,R15,68.96,moe_exl3 (TF grouped),29.36,"84 launches/step; ~95% of bandwidth","rank 0, prose, 39 steps, 2103 kernels/step",decode-prof/p6h
+2026-09-28,R15,68.96,fp8_gemv,23.92,"281 launches; KDA in_proj 205 GB/s (99 blocks over 48 SMs = wave split)",same,decode-prof/p6h
+2026-09-28,R15,68.96,nccl all-reduce,4.25,"102 calls; ~2.1 ms of it waits for the other rank",same,decode-prof/p6h
+2026-09-28,R15,68.96,bf16_gemm,3.55,126 launches,same,decode-prof/p6h
+2026-09-28,R15,68.96,moe_small (glue),2.22,260 launches (216 under 15 us),same,decode-prof/p6h
+2026-09-28,R15,68.96,other small,1.75,842 launches (839 under 15 us),same,decode-prof/p6h
+2026-09-28,R15,68.96,mhc,1.68,185 launches,same,decode-prof/p6h
+2026-09-28,R15,68.96,kda_small,1.42,102 launches,same,decode-prof/p6h
+2026-09-28,R15,68.96,mla_attn_idx,0.99,118 launches,same,decode-prof/p6h
+2026-09-28,R15,68.96,drafter fc (Marlin),0.40,1 launch,same,decode-prof/p6h
+2026-09-28,R15,68.96,GPU idle,2.99,"1.04 ms of it in 1592 gaps < 10 us; rest = drafter->target host gap",same,decode-prof/p6h
+2026-09-28,R15,~52,weights-only bandwidth floor,~52,,estimate from bytes read per step,operator notes
+2026-10-05,r16z7 era (before PLAN_PIN/DLMH/AR1SHOT/VTRIM),74.17,BW: routed MoE (moe_exl3),34.66,"per layer 768 / 869 / 1028 us at M=5/6/8 = 29.3 / 33.1 / 39.2 distinct experts at 240 GB/s","both ranks profiled simultaneously, prose, 39 steps, mean M 5.85 (M = verify rows = K+1)",prof-1005/ana/anatomy_r0.log
+2026-10-05,r16z7 era,74.17,BW: fp8_gemv (dense / KDA / MLA / shared / lm_head),22.46,flat in M,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,BW: bf16 GEMM,2.83,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,BW: KDA lazy state commit,0.66,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,BW: drafter fc (Marlin),0.41,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,exposed NCCL all-reduce + all-gather,3.95 + 0.16,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,small: mHC,1.80,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,small: KDA,1.05,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,small: MoE glue,0.81,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,small: MLA attention / indexer,0.78,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,small: other,0.78,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,small: bf16 GEMM,0.48,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,small: memcpy,0.09,,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,GPU idle (exposed),3.23,"2.59 ms of it before the target pass (host-side MLA plan copy blocked; fixed by PLAN_PIN)",same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,phase: drafter (D),5.09,"exposed BW 3.99, nccl 0.69, small 0.28",same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,phase: pre-target host work (PRE),2.95,idle 2.59,same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,phase: target verify pass (T),63.18,"exposed BW 54.45, nccl 3.17, small 5.14",same,prof-1005/ana
+2026-10-05,r16z7 era,74.17,phase: post (sampling / commit),2.96,,same,prof-1005/ana

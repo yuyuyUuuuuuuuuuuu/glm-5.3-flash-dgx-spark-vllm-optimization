@@ -1,0 +1,4 @@
+.work/
+OWNER-DECISIONS.md
+__pycache__/
+*.pyc

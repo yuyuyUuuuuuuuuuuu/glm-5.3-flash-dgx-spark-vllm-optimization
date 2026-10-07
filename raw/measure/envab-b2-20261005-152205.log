@@ -1,0 +1,62 @@
+== [envab-b2-20261005-152205] 2026-10-05 16:26:40 mem nodeA: avail 4G swap 3469M | nodeB: avail 4G
+== decode (bench_decode x10)
+[envab-b2-20261005-152205] start 16:26:41 running=0.0 pgmigrate_fail 23012416 compact_stall 2576605  proactive=0 avail_gb=4
+[envab-b2-20261005-152205] prose      tok/s med 43.05 (min 40.57 max 48.57) acc/step 2.09 ms/step 70.97
+[envab-b2-20261005-152205] structured tok/s med 99.36 (min 98.77 max 100.74) acc/step 7.0 ms/step 80.11
+[envab-b2-20261005-152205] coding     tok/s med 62.2 (min 57.27 max 67.02) acc/step 4.05 ms/step 81.0
+[envab-b2-20261005-152205] ja         tok/s med 42.23 (min 39.78 max 44.68) acc/step 1.84 ms/step 67.17
+[envab-b2-20261005-152205] end 16:29:21 running=0.0 pgmigrate_fail 23012416 compact_stall 2576605  proactive=0 avail_gb=4
+== decode stream gaps
+[envab-b2-20261005-152205-2k] chunks 582 decode 40.8s | gap p50 69 p90 75 p99 86 max 133 ms | gaps>200ms: 0 sum 0.0s
+[envab-b2-20261005-152205-2k] big gaps at chunk idx: []
+[envab-b2-20261005-152205-40k] chunks 576 decode 40.9s | gap p50 70 p90 77 p99 93 max 134 ms | gaps>200ms: 0 sum 0.0s
+[envab-b2-20261005-152205-40k] big gaps at chunk idx: []
+== prefill real text
+[envab-b2-20261005-152205] real-text prefill ~8496 tok: 3.24s, 3.09s, 3.18s -> median 2654 tok/s
+[envab-b2-20261005-152205] real-text prefill ~14813 tok: 5.08s, 5.46s, 5.29s -> median 2946 tok/s
+== prefill random 24k
+[envab-b2-20261005-152205] prefill ~24030 tok: 7.97s, 7.94s, 7.96s -> median 3020 tok/s
+== APC 40k (repeat + turn2)
+turn1: prompt 39035 cached 0 e2e 15.8s hits+0 queries+39848
+repeat: prompt 39035 cached 36864 e2e 3.6s hits+36864 queries+40071
+busy, abort
+== APC 97k repeat (fresh 591 case)
+[envab-b2-20261005-152205-apc97k] busy (running=1.0 waiting=0.0), abort
+== kpool decode-vs-prefill
+server busy (running=1 waiting=0); retry when idle or pass --force
+kpool: busy, retry 1
+text 0: prompt 6842 tokens, generated 1536
+text 1: prompt 5202 tokens, generated 1536
+text 2: prompt 8350 tokens, generated 1536
+${HOME}/tf-exl3-deploy/kpool-after-envab-b2-20261005-152205.json (2026-10-05 16:34:28): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01628  top-1 agree 96.88%
+  gen pos [128, 512): n=1152  KL mean 0.01495  top-1 agree 97.74%
+  gen pos [512, 1024): n=1536  KL mean 0.01902  top-1 agree 97.14%
+  gen pos [1024, 1536): n=1536  KL mean 0.01878  top-1 agree 97.72%
+  all: n=4608  KL mean 0.01769  top-1 agree 97.46%
+${HOME}/tf-exl3-deploy/kpool-before-r15.json (2026-09-28 19:05:13): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.00646  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.00654  top-1 agree 98.18%
+  gen pos [512, 1024): n=1536  KL mean 0.00622  top-1 agree 98.37%
+  gen pos [1024, 1536): n=1536  KL mean 0.00602  top-1 agree 98.76%
+  all: n=4608  KL mean 0.00625  top-1 agree 98.48%
+${HOME}/tf-exl3-deploy/kpool-after-envab-b2-20261005-152205.json (2026-10-05 16:34:28): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01628  top-1 agree 96.88%
+  gen pos [128, 512): n=1152  KL mean 0.01495  top-1 agree 97.74%
+  gen pos [512, 1024): n=1536  KL mean 0.01902  top-1 agree 97.14%
+  gen pos [1024, 1536): n=1536  KL mean 0.01878  top-1 agree 97.72%
+  all: n=4608  KL mean 0.01769  top-1 agree 97.46%
+KL mean before 0.00625 -> after 0.01769 (+182.9%)
+== quality long vs R15
+text 2: 15954 positions
+long-context (positions >= 4608, n=28275): KL mean 0.0590 p95 0.2427 max 11.386 | top-1 agree 97.12%
+== quality short vs R15
+wrote Q_envab-b2-20261005-152205.json: 20 decode, 6 prefill texts
+decode: identical 1/20; first divergence token idx median 14 min 0; |dlogprob| on shared prefix mean 4.26e-02 max 9.08e-01 (n=493)
+prefill KL(A||B) nats/token over top-20 union: mean 0.0642 p95 0.2448 max 11.8164 (n=962)
+== klh
+KLH envab-b2-20261005-152205 nll=0.50382 top1=0.8774 aa=0.01305 dvptf=0.01204 dvptf_se=0.00181 n_pf=415620 n_dec=1915
+KLH-CMP envab-base-20261005-152205 pfkl=0.01363 nll=0.50369 dvptf=0.01108 long5=0.05889 long5_top1=97.10
+KLH-CMP envab-b2-20261005-152205 pfkl=0.01382 nll=0.50382 dvptf=0.01204 long5=0.05858 long5_top1=97.14 d_kl=+0.00019 d_kl_lo=+0.00002 d_kl_hi=+0.00036 d_nll=+0.00014 d_nll_lo=-0.00053 d_nll_hi=+0.00093 d_dvp=+0.00036 d_dvp_lo=-0.00134 d_dvp_hi=+0.00213
+KLH-GATE envab-b2-20261005-152205 d_pfkl=+0.00021 lo=+0.00003 hi=+0.00039 se=0.00011 df=44 d_dvp=+0.00036 dvp_lo=-0.00134 dvp_hi=+0.00213
+== [envab-b2-20261005-152205] done 2026-10-05 16:46:29 mem nodeA: avail 4G swap 3806M

@@ -1,0 +1,55 @@
+== [envab-a2-20261003-201531] 2026-10-03 20:56:08 mem nodeA: avail 4G swap 2520M | nodeB: avail 4G
+== decode (bench_decode x10)
+[envab-a2-20261003-201531] start 20:56:08 running=0.0 pgmigrate_fail 10649998 compact_stall 1331067  proactive=0 avail_gb=4
+[envab-a2-20261003-201531] prose      tok/s med 41.32 (min 39.7 max 42.16) acc/step 2.03 ms/step 73.07
+[envab-a2-20261003-201531] structured tok/s med 95.89 (min 94.66 max 96.29) acc/step 7.0 ms/step 83.01
+[envab-a2-20261003-201531] coding     tok/s med 57.58 (min 50.2 max 66.27) acc/step 3.76 ms/step 82.1
+[envab-a2-20261003-201531] end 20:57:59 running=0.0 pgmigrate_fail 10649998 compact_stall 1331067  proactive=0 avail_gb=4
+== decode stream gaps
+[envab-a2-20261003-201531-2k] chunks 584 decode 42.4s | gap p50 72 p90 78 p99 89 max 135 ms | gaps>200ms: 0 sum 0.0s
+[envab-a2-20261003-201531-2k] big gaps at chunk idx: []
+[envab-a2-20261003-201531-40k] chunks 577 decode 42.5s | gap p50 73 p90 80 p99 110 max 137 ms | gaps>200ms: 0 sum 0.0s
+[envab-a2-20261003-201531-40k] big gaps at chunk idx: []
+== prefill real text
+[envab-a2-20261003-201531] real-text prefill ~8496 tok: 3.17s, 3.08s, 3.09s -> median 2683 tok/s
+[envab-a2-20261003-201531] real-text prefill ~14812 tok: 4.90s, 5.26s, 5.12s -> median 3044 tok/s
+== prefill random 24k
+[envab-a2-20261003-201531] prefill ~24030 tok: 7.65s, 7.67s, 7.69s -> median 3134 tok/s
+== APC 40k (repeat + turn2)
+turn1: prompt 39035 cached 0 e2e 14.2s hits+0 queries+39035
+repeat: prompt 39035 cached 36864 e2e 2.6s hits+36864 queries+39035
+turn2: prompt 39048 cached 36864 e2e 2.2s hits+36864 queries+39048
+== APC 97k repeat (fresh 591 case)
+[envab-a2-20261003-201531-apc97k] cold: prompt 97359 cached 0 completion 64 ttft 31.00s decode 1.21s steps 15 -> 80.4 ms/step, 3.93 tok/step, 53.1 tok/s
+[envab-a2-20261003-201531-apc97k] warm: prompt 97359 cached 96768 completion 64 ttft 0.78s decode 1.25s steps 16 -> 78.0 ms/step, 4.12 tok/step, 51.3 tok/s
+== kpool decode-vs-prefill
+text 0: prompt 6842 tokens, generated 1536
+text 1: prompt 5202 tokens, generated 1536
+text 2: prompt 8350 tokens, generated 1536
+${HOME}/tf-exl3-deploy/kpool-after-envab-a2-20261003-201531.json (2026-10-03 21:03:05): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01299  top-1 agree 98.18%
+  gen pos [128, 512): n=1152  KL mean 0.02035  top-1 agree 97.31%
+  gen pos [512, 1024): n=1536  KL mean 0.01473  top-1 agree 98.24%
+  gen pos [1024, 1536): n=1536  KL mean 0.01264  top-1 agree 98.50%
+  all: n=4608  KL mean 0.01529  top-1 agree 98.09%
+${HOME}/tf-exl3-deploy/kpool-before-r15.json (2026-09-28 19:05:13): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.00646  top-1 agree 98.70%
+  gen pos [128, 512): n=1152  KL mean 0.00654  top-1 agree 98.18%
+  gen pos [512, 1024): n=1536  KL mean 0.00622  top-1 agree 98.37%
+  gen pos [1024, 1536): n=1536  KL mean 0.00602  top-1 agree 98.76%
+  all: n=4608  KL mean 0.00625  top-1 agree 98.48%
+${HOME}/tf-exl3-deploy/kpool-after-envab-a2-20261003-201531.json (2026-10-03 21:03:05): decode vs prefill over generated positions
+  gen pos [0, 128): n=384  KL mean 0.01299  top-1 agree 98.18%
+  gen pos [128, 512): n=1152  KL mean 0.02035  top-1 agree 97.31%
+  gen pos [512, 1024): n=1536  KL mean 0.01473  top-1 agree 98.24%
+  gen pos [1024, 1536): n=1536  KL mean 0.01264  top-1 agree 98.50%
+  all: n=4608  KL mean 0.01529  top-1 agree 98.09%
+KL mean before 0.00625 -> after 0.01529 (+144.5%)
+== quality long vs R15
+text 2: 15954 positions
+long-context (positions >= 4608, n=28275): KL mean 0.0164 p95 0.0613 max 4.888 | top-1 agree 98.55%
+== quality short vs R15
+wrote Q_envab-a2-20261003-201531.json: 20 decode, 6 prefill texts
+decode: identical 2/20; first divergence token idx median 20 min 3; |dlogprob| on shared prefix mean 2.69e-02 max 3.76e-01 (n=630)
+prefill KL(A||B) nats/token over top-20 union: mean 0.0186 p95 0.0574 max 2.5630 (n=962)
+== [envab-a2-20261003-201531] done 2026-10-03 21:04:15 mem nodeA: avail 4G swap 2470M

@@ -1,0 +1,459 @@
+{
+  "phase": "vtrim-prod-ja",
+  "health_code": 200,
+  "health_body": "",
+  "runs": [
+    {
+      "http": 200,
+      "ttft_s": 0.22060001408681273,
+      "wall_s": 4.546535662026145,
+      "decode_s": 4.325935647939332,
+      "tok_s": 46.00160894552235,
+      "delivered_tok_s": 43.98953728009929,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u3068\u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u3092\u7d44\u307f\u5408\u308f\u305b\u308b\u3053\u3068\u3067\u3001\u5e73\u5747\u7684\u306b **O(1)** \u306e\u6642\u9593\u3067\u8981\u7d20\u3078\u306e\u30a2\u30af\u30bb\u30b9\u3092\u5b9f\u73fe\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u914d\u5217[3] \u306b\u5024\u3092\u683c\u7d0d\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u306e\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n             [ ]    [ ]    [ ]   [\"apple\"\u2192150]  [ ]\n```\n\n### \u30c7\u30fc\u30bf\u683c\u7d0d\u306e\u6d41\u308c\n\n1.",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u3068\u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u3092\u7d44\u307f\u5408\u308f\u305b\u308b\u3053\u3068\u3067\u3001\u5e73\u5747\u7684\u306b **O(1)** \u306e\u6642\u9593\u3067\u8981\u7d20\u3078\u306e\u30a2\u30af\u30bb\u30b9\u3092\u5b9f\u73fe\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u914d\u5217[3] \u306b\u5024\u3092\u683c\u7d0d\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u306e\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n             [ ]    [ ]    [ ]   [\"apple\"\u2192150]  [ ]\n```\n\n### \u30c7\u30fc\u30bf\u683c\u7d0d\u306e\u6d41\u308c\n\n1.",
+      "text_len": 353,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 69,
+        "draft_tokens": 310,
+        "accepted": 130,
+        "accept_ratio": 0.4194,
+        "accepted_per_step": 1.884,
+        "mean_draft_tokens_per_step": 4.493,
+        "pos": [
+          0.7681,
+          0.5217,
+          0.3188,
+          0.2174,
+          0.058,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.2565842439653352,
+      "wall_s": 4.614543856936507,
+      "decode_s": 4.357959612971172,
+      "tok_s": 45.66357141256885,
+      "delivered_tok_s": 43.341228559213555,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306b\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u3067\u30a2\u30af\u30bb\u30b9\u3059\u308b\u306e\u3067\u306f\u306a\u304f\u3001\u30ad\u30fc\u304b\u3089\u76f4\u63a5\u30c7\u30fc\u30bf\u306e\u5834\u6240\u3092\u8a08\u7b97\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n             [    ] [    ] [    ] [    ] [    ]\n```\n\n### \u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u306e\u5f79\u5272\n\n\u30ad\u30fc\u3092\u914d\u5217\u306e\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u306b\u5909",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306b\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u3067\u30a2\u30af\u30bb\u30b9\u3059\u308b\u306e\u3067\u306f\u306a\u304f\u3001\u30ad\u30fc\u304b\u3089\u76f4\u63a5\u30c7\u30fc\u30bf\u306e\u5834\u6240\u3092\u8a08\u7b97\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n             [    ] [    ] [    ] [    ] [    ]\n```\n\n### \u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u306e\u5f79\u5272\n\n\u30ad\u30fc\u3092\u914d\u5217\u306e\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u306b\u5909",
+      "text_len": 360,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 70,
+        "draft_tokens": 318,
+        "accepted": 131,
+        "accept_ratio": 0.4119,
+        "accepted_per_step": 1.871,
+        "mean_draft_tokens_per_step": 4.543,
+        "pos": [
+          0.7714,
+          0.4857,
+          0.3143,
+          0.2286,
+          0.0714,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.2551749750273302,
+      "wall_s": 4.485373544041067,
+      "decode_s": 4.230198569013737,
+      "tok_s": 47.04270893042179,
+      "delivered_tok_s": 44.58937433777507,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306b\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u3067\u30a2\u30af\u30bb\u30b9\u3059\u308b\u306e\u3067\u306f\u306a\u304f\u3001\u30ad\u30fc\u304b\u3089\u76f4\u63a5\u30c7\u30fc\u30bf\u306e\u5834\u6240\u3092\u8a08\u7b97\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n            [    ] [    ] [    ] [    ] [    ]\n```\n\n### \u30cf\u30c3\u30b7\u30e5\u95a2\u6570\n\n\u30ad\u30fc\u3092\u6574\u6570\u5024\u306b\u5909\u63db\u3057\u3001\u914d\u5217\u306e\u30a4\u30f3",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306b\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u3067\u30a2\u30af\u30bb\u30b9\u3059\u308b\u306e\u3067\u306f\u306a\u304f\u3001\u30ad\u30fc\u304b\u3089\u76f4\u63a5\u30c7\u30fc\u30bf\u306e\u5834\u6240\u3092\u8a08\u7b97\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n            [    ] [    ] [    ] [    ] [    ]\n```\n\n### \u30cf\u30c3\u30b7\u30e5\u95a2\u6570\n\n\u30ad\u30fc\u3092\u6574\u6570\u5024\u306b\u5909\u63db\u3057\u3001\u914d\u5217\u306e\u30a4\u30f3",
+      "text_len": 358,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 68,
+        "draft_tokens": 308,
+        "accepted": 131,
+        "accept_ratio": 0.4253,
+        "accepted_per_step": 1.926,
+        "mean_draft_tokens_per_step": 4.529,
+        "pos": [
+          0.8382,
+          0.5,
+          0.3088,
+          0.2059,
+          0.0735,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.2524926640326157,
+      "wall_s": 4.648401961079799,
+      "decode_s": 4.395909297047183,
+      "tok_s": 45.26935988730981,
+      "delivered_tok_s": 43.02553902923255,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u3068\u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u3092\u7d44\u307f\u5408\u308f\u305b\u308b\u3053\u3068\u3067\u3001\u5e73\u5747 **O(1)** \u306e\u6642\u9593\u3067\u8981\u7d20\u3078\u306e\u30a2\u30af\u30bb\u30b9\u3092\u5b9f\u73fe\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u914d\u5217[3] \u306b\u5024\u3092\u683c\u7d0d\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u57fa\u672c\u8981\u7d20\n\n```python\n# \u6982\u5ff5\u7684\u306a\u30a4\u30e1\u30fc\u30b8\nhash_map = [\n    bucket_0: [(\"key_a\", value_a)],\n    bucket_1: [],                      # \u7a7a\u306e\u30d0\u30b1\u30c3\u30c8\n    bucket_2: [(\"key_b\", value_b), (\"key_c\", value_c)],  # \u885d\u7a81\u767a\u751f",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u3068\u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u3092\u7d44\u307f\u5408\u308f\u305b\u308b\u3053\u3068\u3067\u3001\u5e73\u5747 **O(1)** \u306e\u6642\u9593\u3067\u8981\u7d20\u3078\u306e\u30a2\u30af\u30bb\u30b9\u3092\u5b9f\u73fe\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u914d\u5217[3] \u306b\u5024\u3092\u683c\u7d0d\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u57fa\u672c\u8981\u7d20\n\n```python\n# \u6982\u5ff5\u7684\u306a\u30a4\u30e1\u30fc\u30b8\nhash_map = [\n    bucket_0: [(\"key_a\", value_a)],\n    bucket_1: [],                      # \u7a7a\u306e\u30d0\u30b1\u30c3\u30c8\n    bucket_2: [(\"key_b\", value_b), (\"key_c\", value_c)],  # \u885d\u7a81\u767a\u751f",
+      "text_len": 391,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 70,
+        "draft_tokens": 308,
+        "accepted": 129,
+        "accept_ratio": 0.4188,
+        "accepted_per_step": 1.843,
+        "mean_draft_tokens_per_step": 4.4,
+        "pos": [
+          0.7857,
+          0.5429,
+          0.2857,
+          0.2,
+          0.0286,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.28033198101911694,
+      "wall_s": 4.4990654670400545,
+      "decode_s": 4.218733486020938,
+      "tok_s": 47.17055501595446,
+      "delivered_tok_s": 44.45367631682418,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306b\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u3067\u30a2\u30af\u30bb\u30b9\u3059\u308b\u306e\u3067\u306f\u306a\u304f\u3001\u30ad\u30fc\u304b\u3089\u76f4\u63a5\u30c7\u30fc\u30bf\u306e\u5834\u6240\u3092\u8a08\u7b97\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n            [    ] [    ] [    ] [    ] [    ]\n```\n\n### \u30cf\u30c3\u30b7\u30e5\u95a2\u6570\n\n\u30ad\u30fc\u3092\u6574\u6570\u5024\u306b\u5909\u63db\u3057\u3001\u914d\u5217\u306e\u30a4\u30f3",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306b\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u3067\u30a2\u30af\u30bb\u30b9\u3059\u308b\u306e\u3067\u306f\u306a\u304f\u3001\u30ad\u30fc\u304b\u3089\u76f4\u63a5\u30c7\u30fc\u30bf\u306e\u5834\u6240\u3092\u8a08\u7b97\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n            [    ] [    ] [    ] [    ] [    ]\n```\n\n### \u30cf\u30c3\u30b7\u30e5\u95a2\u6570\n\n\u30ad\u30fc\u3092\u6574\u6570\u5024\u306b\u5909\u63db\u3057\u3001\u914d\u5217\u306e\u30a4\u30f3",
+      "text_len": 358,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 68,
+        "draft_tokens": 310,
+        "accepted": 131,
+        "accept_ratio": 0.4226,
+        "accepted_per_step": 1.926,
+        "mean_draft_tokens_per_step": 4.559,
+        "pos": [
+          0.8235,
+          0.5,
+          0.3088,
+          0.2206,
+          0.0735,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.2540352389914915,
+      "wall_s": 4.772553346934728,
+      "decode_s": 4.518518107943237,
+      "tok_s": 44.040987608342654,
+      "delivered_tok_s": 41.90628903675936,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": true,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306a\u300c\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u756a\u53f7\u300d\u3067\u306f\u306a\u304f\u3001\u4efb\u610f\u306e\u30ad\u30fc(\u6587\u5b57\u5217\u306a\u3069)\u304b\u3089\u76f4\u63a5\u5024\u306b\u30a2\u30af\u30bb\u30b9\u3067\u304d\u308b\u306e\u304c\u7279\u5fb4\u3067\u3059\u3002\n\n```\n{\"apple\" \u2192 150, \"banana\" \u2192 100, \"orange\" \u2192 200}\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\u306e\u57fa\u672c\n\n### 2.1 \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u5185\u90e8\u306b\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)**\u3068\u547c\u3070\u308c\u308b\u914d\u5217\u3092\u6301\u3063\u3066\u3044\u307e\u3059\u3002\n\n```\n\u30d0\u30b1\u30c3\u30c8\u914d\u5217(\u521d\u671f\u30b5\u30a4\u30ba 8 \u306e\u4f8b):\n[0] [1] [2] [3] [4] [5] [6] [7]\n```\n\n### 2.2 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570\n\n\u30ad\u30fc\u3092",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306a\u300c\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u756a\u53f7\u300d\u3067\u306f\u306a\u304f\u3001\u4efb\u610f\u306e\u30ad\u30fc(\u6587\u5b57\u5217\u306a\u3069)\u304b\u3089\u76f4\u63a5\u5024\u306b\u30a2\u30af\u30bb\u30b9\u3067\u304d\u308b\u306e\u304c\u7279\u5fb4\u3067\u3059\u3002\n\n```\n{\"apple\" \u2192 150, \"banana\" \u2192 100, \"orange\" \u2192 200}\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\u306e\u57fa\u672c\n\n### 2.1 \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u5185\u90e8\u306b\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)**\u3068\u547c\u3070\u308c\u308b\u914d\u5217\u3092\u6301\u3063\u3066\u3044\u307e\u3059\u3002\n\n```\n\u30d0\u30b1\u30c3\u30c8\u914d\u5217(\u521d\u671f\u30b5\u30a4\u30ba 8 \u306e\u4f8b):\n[0] [1] [2] [3] [4] [5] [6] [7]\n```\n\n### 2.2 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570\n\n\u30ad\u30fc\u3092",
+      "text_len": 341,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 72,
+        "draft_tokens": 324,
+        "accepted": 128,
+        "accept_ratio": 0.3951,
+        "accepted_per_step": 1.778,
+        "mean_draft_tokens_per_step": 4.5,
+        "pos": [
+          0.75,
+          0.4583,
+          0.3056,
+          0.2222,
+          0.0417,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.24944295594468713,
+      "wall_s": 4.777564486023039,
+      "decode_s": 4.5281215300783515,
+      "tok_s": 43.94758371172883,
+      "delivered_tok_s": 41.86233395386043,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u3068\u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u3092\u7d44\u307f\u5408\u308f\u305b\u308b\u3053\u3068\u3067\u3001\u5e73\u5747\u7684\u306b **O(1)** \u306e\u6642\u9593\u3067\u8981\u7d20\u3078\u306e\u30a2\u30af\u30bb\u30b9\u3092\u5b9f\u73fe\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u30d0\u30b1\u30c3\u30c8[3] \u306b\u5024\u3092\u683c\u7d0d\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f\u5185\u90e8\u7684\u306b**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3092\u6301\u3063\u3066\u3044\u307e\u3059\u3002\n\n```\n\u30d0\u30b1\u30c3\u30c8\u914d\u5217(\u521d\u671f\u5bb9\u91cf 8 \u306e\u4f8b):\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0     1     2     3     4     5     6     7\n            [\u7a7a] [\u7a7a] [\u7a7a] [apple",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u3068\u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u3092\u7d44\u307f\u5408\u308f\u305b\u308b\u3053\u3068\u3067\u3001\u5e73\u5747\u7684\u306b **O(1)** \u306e\u6642\u9593\u3067\u8981\u7d20\u3078\u306e\u30a2\u30af\u30bb\u30b9\u3092\u5b9f\u73fe\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u30d0\u30b1\u30c3\u30c8[3] \u306b\u5024\u3092\u683c\u7d0d\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f\u5185\u90e8\u7684\u306b**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3092\u6301\u3063\u3066\u3044\u307e\u3059\u3002\n\n```\n\u30d0\u30b1\u30c3\u30c8\u914d\u5217(\u521d\u671f\u5bb9\u91cf 8 \u306e\u4f8b):\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0     1     2     3     4     5     6     7\n            [\u7a7a] [\u7a7a] [\u7a7a] [apple",
+      "text_len": 350,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 72,
+        "draft_tokens": 322,
+        "accepted": 127,
+        "accept_ratio": 0.3944,
+        "accepted_per_step": 1.764,
+        "mean_draft_tokens_per_step": 4.472,
+        "pos": [
+          0.6944,
+          0.4861,
+          0.3056,
+          0.2222,
+          0.0556,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.20802466396708041,
+      "wall_s": 4.5587757310131565,
+      "decode_s": 4.350751067046076,
+      "tok_s": 45.739229143052356,
+      "delivered_tok_s": 43.87142772552037,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": true,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u3068\u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u3092\u7d44\u307f\u5408\u308f\u305b\u308b\u3053\u3068\u3067\u3001\u5e73\u5747 **O(1)** \u306e\u6642\u9593\u3067\u8981\u7d20\u3078\u306e\u30a2\u30af\u30bb\u30b9\u3092\u5b9f\u73fe\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\"  \u2192  \u30cf\u30c3\u30b7\u30e5\u95a2\u6570  \u2192  \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3  \u2192  \u30d0\u30b1\u30c3\u30c8[3] = (\"apple\", 150)\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u57fa\u672c\u8981\u7d20\n\n```python\n# \u6982\u5ff5\u7684\u306a\u30a4\u30e1\u30fc\u30b8\nhash_map = [\n    bucket_0: [],\n    bucket_1: [(\"banana\", 200)],\n    bucket_2: [],\n    bucket_3: [(\"apple\", 150), (\"grape\", 300)],  # \u885d\u7a81",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u3068\u30cf\u30c3\u30b7\u30e5\u95a2\u6570\u3092\u7d44\u307f\u5408\u308f\u305b\u308b\u3053\u3068\u3067\u3001\u5e73\u5747 **O(1)** \u306e\u6642\u9593\u3067\u8981\u7d20\u3078\u306e\u30a2\u30af\u30bb\u30b9\u3092\u5b9f\u73fe\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\"  \u2192  \u30cf\u30c3\u30b7\u30e5\u95a2\u6570  \u2192  \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3  \u2192  \u30d0\u30b1\u30c3\u30c8[3] = (\"apple\", 150)\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u57fa\u672c\u8981\u7d20\n\n```python\n# \u6982\u5ff5\u7684\u306a\u30a4\u30e1\u30fc\u30b8\nhash_map = [\n    bucket_0: [],\n    bucket_1: [(\"banana\", 200)],\n    bucket_2: [],\n    bucket_3: [(\"apple\", 150), (\"grape\", 300)],  # \u885d\u7a81",
+      "text_len": 385,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 67,
+        "draft_tokens": 299,
+        "accepted": 133,
+        "accept_ratio": 0.4448,
+        "accepted_per_step": 1.985,
+        "mean_draft_tokens_per_step": 4.463,
+        "pos": [
+          0.8209,
+          0.597,
+          0.3433,
+          0.194,
+          0.0299,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.27152368298266083,
+      "wall_s": 4.826343368040398,
+      "decode_s": 4.554819685057737,
+      "tok_s": 43.689984183748756,
+      "delivered_tok_s": 41.43923976159293,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306a\u300c\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u756a\u53f7\u300d\u3067\u306f\u306a\u304f\u3001\u4efb\u610f\u306e\u30ad\u30fc(\u6587\u5b57\u5217\u306a\u3069)\u304b\u3089\u76f4\u63a5\u5024\u306b\u30a2\u30af\u30bb\u30b9\u3067\u304d\u308b\u306e\u304c\u7279\u5fb4\u3067\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n            [\u7a7a]  [\"b\":2]  [\u7a7a]  [\"a\":1]  [\u7a7a]\n```\n\n### \u30cf\u30c3\u30b7\u30e5\u95a2\u6570",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306a\u300c\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u756a\u53f7\u300d\u3067\u306f\u306a\u304f\u3001\u4efb\u610f\u306e\u30ad\u30fc(\u6587\u5b57\u5217\u306a\u3069)\u304b\u3089\u76f4\u63a5\u5024\u306b\u30a2\u30af\u30bb\u30b9\u3067\u304d\u308b\u306e\u304c\u7279\u5fb4\u3067\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n            [\u7a7a]  [\"b\":2]  [\u7a7a]  [\"a\":1]  [\u7a7a]\n```\n\n### \u30cf\u30c3\u30b7\u30e5\u95a2\u6570",
+      "text_len": 346,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 73,
+        "draft_tokens": 325,
+        "accepted": 128,
+        "accept_ratio": 0.3938,
+        "accepted_per_step": 1.753,
+        "mean_draft_tokens_per_step": 4.452,
+        "pos": [
+          0.7671,
+          0.4247,
+          0.3014,
+          0.2192,
+          0.0411,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "http": 200,
+      "ttft_s": 0.2648993160109967,
+      "wall_s": 4.709578350069933,
+      "decode_s": 4.444679034058936,
+      "tok_s": 44.7726367809895,
+      "delivered_tok_s": 42.466646721575444,
+      "completion_tokens": 200,
+      "prompt_tokens": 43,
+      "finish_reason": "length",
+      "nan": false,
+      "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306b\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u3067\u30a2\u30af\u30bb\u30b9\u3059\u308b\u306e\u3067\u306f\u306a\u304f\u3001\u30ad\u30fc\u304b\u3089\u76f4\u63a5\u30c7\u30fc\u30bf\u306e\u5834\u6240\u3092\u8a08\u7b97\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n            [    ] [    ] [    ] [    ] [    ]\n```\n\n### \u683c\u7d0d\u306e\u6d41\u308c\n\n```python\n# \u6982\u5ff5\u7684\u306a\u30b3\u30fc\u30c9\ndef put",
+      "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map)\u306e\u4ed5\u7d44\u307f\n\n## 1. \u57fa\u672c\u6982\u5ff5\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306f**\u30ad\u30fc\u3068\u5024\u306e\u30da\u30a2**\u3092\u52b9\u7387\u7684\u306b\u683c\u7d0d\u30fb\u691c\u7d22\u3059\u308b\u30c7\u30fc\u30bf\u69cb\u9020\u3067\u3059\u3002\u914d\u5217\u306e\u3088\u3046\u306b\u30a4\u30f3\u30c7\u30c3\u30af\u30b9\u3067\u30a2\u30af\u30bb\u30b9\u3059\u308b\u306e\u3067\u306f\u306a\u304f\u3001\u30ad\u30fc\u304b\u3089\u76f4\u63a5\u30c7\u30fc\u30bf\u306e\u5834\u6240\u3092\u8a08\u7b97\u3057\u307e\u3059\u3002\n\n```\n\u30ad\u30fc \"apple\" \u2192 \u30cf\u30c3\u30b7\u30e5\u95a2\u6570 \u2192 \u30a4\u30f3\u30c7\u30c3\u30af\u30b9 3 \u2192 \u5024 \"\u308a\u3093\u3054\"\n```\n\n---\n\n## 2. \u5185\u90e8\u69cb\u9020\n\n### \u30d0\u30b1\u30c3\u30c8\u914d\u5217\n\n\u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7\u306e\u672c\u4f53\u306f**\u30d0\u30b1\u30c3\u30c8(bucket)\u914d\u5217**\u3067\u3059\u3002\n\n```\n\u30a4\u30f3\u30c7\u30c3\u30af\u30b9:  0      1      2      3      4\n            [    ] [    ] [    ] [    ] [    ]\n```\n\n### \u683c\u7d0d\u306e\u6d41\u308c\n\n```python\n# \u6982\u5ff5\u7684\u306a\u30b3\u30fc\u30c9\ndef put",
+      "text_len": 368,
+      "usage": {
+        "prompt_tokens": 43,
+        "total_tokens": 243,
+        "completion_tokens": 200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        }
+      },
+      "spec": {
+        "drafts": 72,
+        "draft_tokens": 322,
+        "accepted": 127,
+        "accept_ratio": 0.3944,
+        "accepted_per_step": 1.764,
+        "mean_draft_tokens_per_step": 4.472,
+        "pos": [
+          0.7778,
+          0.4583,
+          0.2639,
+          0.1944,
+          0.0694,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  ],
+  "ts": 1791189166.9292085,
+  "prompt": "hashmap-prose",
+  "thinking": false,
+  "temperature": 0,
+  "concurrency": 1,
+  "note": "decode_ms_per_draft_step is a serving-cycle ratio, not a kernel timing",
+  "tok_s_median": 45.46646564993933,
+  "tok_s_min": 43.689984183748756,
+  "tok_s_max": 47.17055501595446,
+  "ttft_median_s": 0.25460510700941086,
+  "completion_tokens_median": 200.0,
+  "accept_ratio_median": 0.41535,
+  "accepted_per_step_median": 1.857,
+  "mean_draft_tokens_per_step_median": 4.4825,
+  "aggregate_tok_s_median": null,
+  "decode_ms_per_draft_step_median": 62.5447548708115,
+  "any_nan": true,
+  "health_code_after": 200,
+  "short_after": {
+    "http": 200,
+    "ttft_s": 0.26611997198779136,
+    "wall_s": 0.4071345970733091,
+    "decode_s": 0.14101462508551776,
+    "tok_s": 49.64024118601087,
+    "delivered_tok_s": 19.64952145434968,
+    "completion_tokens": 8,
+    "prompt_tokens": 43,
+    "finish_reason": "length",
+    "nan": false,
+    "text_head": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map",
+    "text": "# \u30cf\u30c3\u30b7\u30e5\u30de\u30c3\u30d7(Hash Map",
+    "text_len": 18,
+    "usage": {
+      "prompt_tokens": 43,
+      "total_tokens": 51,
+      "completion_tokens": 8,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "created_cache_tokens": 0
+      }
+    }
+  }
+}

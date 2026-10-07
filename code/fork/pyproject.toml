@@ -1,0 +1,5 @@
+[build-system]
+# Build inside the production image with its torch: `pip install --no-build-isolation .`
+# (build isolation would pull a different torch from PyPI and produce an ABI-incompatible extension).
+requires = ["setuptools>=64", "torch"]
+build-backend = "setuptools.build_meta"

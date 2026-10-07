@@ -1,0 +1,7 @@
+rank,M_verify_rows,steps_profiled,wall_ms,bandwidth_ms,moe_ms,fp8_gemv_ms,nccl_ms,small_ms,idle_ms,pre_idle_ms,source
+0,5,18,70.42,57.63,31.34,22.36,3.90,5.63,3.27,2.62,prof-1005/ana/per_m.log
+0,6,15,75.09,61.92,35.58,22.45,4.10,5.84,3.23,2.59,prof-1005/ana/per_m.log
+0,8,6,83.11,69.04,42.34,22.78,4.76,6.16,3.14,2.51,prof-1005/ana/per_m.log
+1,5,18,70.42,57.81,31.48,22.44,4.69,5.64,2.28,1.62,prof-1005/ana/per_m.log
+1,6,15,75.09,61.92,35.46,22.56,5.01,5.86,2.30,1.64,prof-1005/ana/per_m.log
+1,8,6,83.09,68.81,42.21,22.74,5.81,6.14,2.34,1.69,prof-1005/ana/per_m.log

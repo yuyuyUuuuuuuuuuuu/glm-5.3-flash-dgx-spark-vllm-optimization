@@ -1,0 +1,12 @@
+date,config,kv_bytes_per_token,kv_pool_tokens,kv_cache_gib,max_model_len,note,status,source
+2026-09-02,NVFP4 checkpoint (first deployment),,1257000,,262144,"weights 192 GB, host MemAvailable ~2 GB",reverted,operator notes
+2026-09-02,EXL3 4bpw (recipe),,731000,,524288,"weights 165 GB, MemAvailable 4-6 GB; 1M window did not fit (14.52 GiB needed vs 12.81)",superseded,operator notes
+2026-09-04,SM90 sparse-MLA backend (HND layout),7227,,,,"selected by a backend-selection patch for compute capability 12.1",adopted,operator notes
+2026-09-04,SM120 sparse-MLA backend (fp8_ds_mla packed),15591,,,,"default selection on GB10 without the patch (2.16x)",avoided,operator notes
+2026-09-06,rebuild that silently dropped the SM90 patch,23201,,,,"pool fell to 59%",incident,operator notes
+2026-09-06,SM90 + KV_CACHE_BYTES=15032385536,8905,1688048,14,512000,"3.30x concurrency at 512k",superseded,operator notes
+2026-09-12,1M window + KV_CACHE_BYTES=16106127360,7931,2031358,15,1000000,"no RoPE scaling needed (max_position_embeddings 1048576)",adopted,operator notes
+2026-09-13,drafter KV fp8 (DFLASH_KV_DTYPE=fp8),,2143382,15,1000000,"+112k tokens, no speed change",reverted (with session),operator notes
+2026-09-28,KV 2M after memprep era,,2003436,15,1000000,"same bytes; pool slightly smaller after new scratch allocations",adopted,production logs
+2026-09-30,KV sized for a single 1M request,,1006289,8.25,1000000,"minimum that starts; 7.5 GiB did not start",rejected,r16k-ab/kv/run.log
+2026-09-12,NVFP4 MLA KV (hypothetical path to 3M+),,~4.7M,,,"KLD 0.024555 -> 0.060535 (2.47x worse; 25 windows / 51,175 positions)",rejected,operator notes

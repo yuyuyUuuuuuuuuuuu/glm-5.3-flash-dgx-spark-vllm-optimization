@@ -1,0 +1,57 @@
+--- a/launcher/start.sh (r16l kit, 971c984c)
++++ b/launcher/start.sh (r16e4, deb611bb)
+@@ -263,6 +263,10 @@
+ #   DFlash2 --speculative-config in BOTH inner scripts; forwarded to both ranks (head -e after
+ #   GLM53_SPEC_RESAMPLE_INDEPENDENT, worker serve_env_names). block also runs the bundle overlay
+ #   patch_spec_block_keys.py (patch_tf_bundle.py) on both ranks. docs/BLOCK_VERIFY.md of tf-exl3-fork.
++# [moee4m3] GLM53_MOE_E4M3=1 (unset/empty/0 = stock) -> the bundle overlay patch_moe_e4m3.py: every routed-MoE
++#   apply call with more tokens than the fused cap (prefill chunks, incl. decode/verify tokens batched into
++#   them) runs on the e4m3 tensor-core kernels; decode-only steps untouched. Per-layer self-test at model
++#   load. On BOTH ranks: head -e after GLM53_KPOOL_DROP_LOWEST, worker serve_env_names. docs/MOE_E4M3.md.
+ # [kpooldown] GLM53_KPOOL_DROP_LOWEST=1 (unset/empty/0 = stock) -> the bundle overlay patch_kpool_drop_lowest.py:
+ #   the kpool indexer keeps the select_k-1 HIGHEST-scored pools before expand_pools_and_append_tail, dropping
+ #   the lowest, deterministically (no host sync, FULL-graph safe), instead of production's arbitrary one. On
+@@ -763,6 +767,26 @@
+             return 2
+         fi
+     fi
++    # [moee4m3] the e4m3 routed-MoE prefill (docs/MOE_E4M3.md), on both ranks. Unset/empty/0 = stock (the bundle
++    # does not even run the overlay: nothing of the feature reaches site-packages); 1 = overlay/patch_moe_e4m3.py,
++    # run by patch_tf_bundle.py (copies glm53_moe_e4m3.py + its extension from the bundle overlay dir into
++    # site-packages and arms integrate.plugin_register). Anything else would stop both containers inside the
++    # bundle, so it is refused here.
++    if [ -n "${GLM53_MOE_E4M3:-}" ]; then
++        _glm53_validate_bool_flag GLM53_MOE_E4M3 "$GLM53_MOE_E4M3" || return
++    fi
++    if [ "${GLM53_MOE_E4M3:-}" = "1" ]; then
++        if [ ! -s "$TF_BUNDLE_DIR_HOST/overlay/patch_moe_e4m3.py" ] \
++           || [ ! -s "$TF_BUNDLE_DIR_HOST/overlay/glm53_moe_e4m3.py" ] \
++           || [ ! -s "$TF_BUNDLE_DIR_HOST/overlay/glm53_moe_e4m3_ext.cpython-312-aarch64-linux-gnu.so" ]; then
++            echo "GLM53_MOE_E4M3=1 requires $TF_BUNDLE_DIR_HOST/overlay/{patch_moe_e4m3.py,glm53_moe_e4m3.py,glm53_moe_e4m3_ext.cpython-312-aarch64-linux-gnu.so}" >&2
++            return 2
++        fi
++        if ! grep -qF '("patch_moe_e4m3.py", "GLM53_MOE_E4M3")' "$TF_BUNDLE_PATCH_HOST" 2>/dev/null; then
++            echo "GLM53_MOE_E4M3=1 requires $TF_BUNDLE_PATCH_HOST to run patch_moe_e4m3.py (the r16e4 patch_tf_bundle.py)" >&2
++            return 2
++        fi
++    fi
+     _glm53_validate_spinwait_ms || return
+     _glm53_validate_bool_flag GLM53_APC_NO_STORE "${GLM53_APC_NO_STORE-1}" || return
+     _glm53_validate_bool_flag GLM53_KV_CAPACITY_LOG "${GLM53_KV_CAPACITY_LOG-1}" || return
+@@ -2279,7 +2303,7 @@
+              GLM53_DEC_MOEGLUE_WARM_MAX_M GLM53_DEC_HOSTLOOP GLM53_DEC_HOSTLOOP_VERIFY \
+              GLM53_DEC_HOSTLOOP_VERIFY_EVERY GLM53_DEC_HOSTLOOP_METER GLM53_DEC_HOSTLOOP_WAKE \
+              GLM53_DEC_HOSTLOOP_WAKE_TICK_US GLM53_DEC_HOSTLOOP_WAKE_PIN GLM53_DEC_PROF_DIAG GLM53_DEC_SMALLOPS \
+-             GLM53_DEC_SMALLOPS_KINDS GLM53_KPOOL_RING GLM53_KDA_STRIDED_QKV GLM53_KPOOL_DROP_LOWEST; do  # [tf-exl3-fork]
++             GLM53_DEC_SMALLOPS_KINDS GLM53_KPOOL_RING GLM53_KDA_STRIDED_QKV GLM53_KPOOL_DROP_LOWEST GLM53_MOE_E4M3; do  # [tf-exl3-fork]
+         serve_env+=" -e $v='${!v:-}'"
+         serve_env_names+=("$v")
+     done
+@@ -2524,6 +2548,7 @@
+         -e GLM53_KPOOL_RING="${GLM53_KPOOL_RING:-}" \
+         -e GLM53_KDA_STRIDED_QKV="${GLM53_KDA_STRIDED_QKV:-}" \
+         -e GLM53_KPOOL_DROP_LOWEST="${GLM53_KPOOL_DROP_LOWEST:-}" \
++        -e GLM53_MOE_E4M3="${GLM53_MOE_E4M3:-}" \
+         -e GLM53_EXL3_MOE_FAST="$GLM53_EXL3_MOE_FAST" \
+         -e GLM53_KDA_BF16_LARGE_M="$GLM53_KDA_BF16_LARGE_M" \
+         -e GLM53_COOP_GEOMETRY="$GLM53_COOP_GEOMETRY" \

@@ -1,0 +1,15 @@
+metric,before,after,unit,conditions
+call wait p50 (conversations >300k tokens),51.6,22.4,s,"24 h before vs 24 h after the 09-24 restart bundle (upstream 48 commits, APC retention 32256, SWA 0, effort marker before first user message)"
+call wait p90 (conversations >300k tokens),532.6,84.0,s,same
+call wait p50 (all client calls),30.2,23.7,s,same
+call wait p90 (all client calls),217,92.7,s,same
+call wait mean (all client calls),87.8,52.9,s,same
+tool round-trips that re-read >30k tokens,42 of 1183 (5.3M tokens),0 of 541,count,same
+after-message re-reads,27 of 130,2 of 116,count,same
+retries (timeout),3.8,1.1,%,same
+prefix-cache hit rate,91.5,94.7,%,same
+uncached tokens per call,9.4k,4.4k,tokens,same
+decode time per token (engine-wide),110,77,ms,same
+waits over 10 s (engine-wide),41.3,22.6,%,same
+engine-wide mean request duration,97.4,116.3,s,"rose only because of 13 h of batch jobs and long gateway calls in the after window"
+first answer of a 400k-token session after a restart,,~12,min,cold re-read cost of any restart
