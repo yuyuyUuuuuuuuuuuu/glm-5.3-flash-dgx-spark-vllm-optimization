@@ -1,5 +1,7 @@
 # GLM-5.3-Flash on 2x NVIDIA DGX Spark (GB10) with vLLM: an optimization log
 
+**Single-stream decode 99.4 tok/s structured, 62.6 coding, 46.6 prose, 45.5 Japanese prose (+35-59% over our pre-kernel baseline); cold 32k-token prefill about 3,000 tok/s; 2,003,436-token fp8 KV cache.** Two GB10 machines, tensor parallelism 2, EXL3 4bpw weights, DFlash2 speculative decoding. Numbers, failed experiments, wrong measurements and the code to reproduce them are all here.
+
 > Licence: AGPL-3.0 (`LICENSE`); upstream notices in `THIRD_PARTY_NOTICES.md`. To rebuild the setup, follow
 > `REPRODUCE.md`. Note that the DFlash2 drafter used here is CC BY-NC-ND 4.0 (non-commercial).
 
